@@ -1,0 +1,21 @@
+{
+  "name": "sinav-studyosu",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Optik formlu çoktan seçmeli sınav hazırlama, PDF basma, telefon kamerasıyla okuma ve madde analizi.",
+  "scripts": {
+    "build": "python3 tools/build.py",
+    "test": "node tests/omr.test.js",
+    "serve": "python3 -m http.server 8080 --directory dist"
+  },
+  "devDependencies": {
+    "@fontsource/fira-sans": "5.1.0",
+    "@mathjax/mathjax-newcm-font": "4.1.3",
+    "jpeg-js": "0.4.4",
+    "jspdf": "2.5.1",
+    "jszip": "3.10.1",
+    "mathjax": "4.1.3",
+    "svg2pdf.js": "2.2.3",
+    "xlsx": "0.18.5"
+  }
+}

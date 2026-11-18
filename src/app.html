@@ -1,0 +1,1505 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sınav Stüdyosu</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fira+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --bg:#E6E9ED; --paper:#FFFFFF; --ink:#16191D; --muted:#5B6470; --line:#C9CFD6; --soft:#F2F4F6;
+  --blue:#2443C4; --on-blue:#FFFFFF; --green:#16824A; --red:#C92E25; --flag:#B97F00; --flag-bg:#FFF1C7;
+  --green-bg:#DDF1E5; --red-bg:#FADFDC;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#111316; --paper:#1B1F23; --ink:#E8EBEE; --muted:#9BA5B0; --line:#323941; --soft:#23282D;
+    --blue:#8099FF; --on-blue:#0D1433; --green:#47C27D; --red:#FF7268; --flag:#F2C14E; --flag-bg:#3A3012;
+    --green-bg:#16301F; --red-bg:#3B1C1A; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#111316; --paper:#1B1F23; --ink:#E8EBEE; --muted:#9BA5B0; --line:#323941; --soft:#23282D;
+  --blue:#8099FF; --on-blue:#0D1433; --green:#47C27D; --red:#FF7268; --flag:#F2C14E; --flag-bg:#3A3012;
+  --green-bg:#16301F; --red-bg:#3B1C1A; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);-webkit-text-size-adjust:100%;height:100%}
+body{margin:0;min-height:100%;background:var(--bg);color:var(--ink);
+  font:16px/1.45 "Fira Sans",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-variant-numeric:tabular-nums}
+img{max-width:100%}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+h2{font-size:1.05rem;font-weight:700;margin:22px 0 8px}
+p{margin:6px 0}
+.muted{color:var(--muted)}
+.small{font-size:.86rem}
+
+.top{max-width:760px;margin:0 auto;padding:12px 16px 2px;display:flex;flex-wrap:wrap;align-items:center;gap:0 12px}
+.exam-switch{background:none;border:0;padding:6px 0;display:flex;align-items:center;gap:6px;text-align:left;font-weight:700;font-size:1.2rem;line-height:1.2;min-width:0}
+.exam-switch span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.exam-switch svg{flex:none;width:18px;height:18px;color:var(--muted)}
+.store-note{flex-basis:100%;font-size:.8rem;color:var(--flag)}
+.store-note:empty{display:none}
+main{max-width:760px;margin:0 auto;padding:4px 16px calc(92px + env(safe-area-inset-bottom,0px))}
+
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;gap:6px;
+  background:var(--paper);border-top:1px solid var(--line);padding:6px 10px calc(6px + env(safe-area-inset-bottom,0px))}
+.tabbar button{flex:1;max-width:190px;background:none;border:0;border-radius:12px;padding:6px 4px 4px;color:var(--muted);
+  display:flex;flex-direction:column;align-items:center;gap:1px;font-size:.78rem;font-weight:500}
+.tabbar svg{width:24px;height:24px}
+.tabbar button[aria-current="page"]{color:var(--blue)}
+.tabbar button[aria-current="page"] svg{stroke-width:2.4}
+
+.btn{border:1.5px solid var(--line);background:var(--paper);border-radius:10px;padding:11px 16px;font-weight:500;line-height:1.2}
+.btn.primary{background:var(--blue);border-color:var(--blue);color:var(--on-blue);font-weight:700}
+.btn.danger{color:var(--red);border-color:var(--red)}
+.btn.ghost{background:none;border-color:transparent;color:var(--blue);padding:8px 6px}
+.btn:disabled{opacity:.5;cursor:default}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.grow{flex:1}
+
+/* Tara */
+.capture{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0 8px}
+.capture .btn{padding:18px 10px;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:1rem}
+.capture svg{width:28px;height:28px}
+.howto{margin:10px 0 0;padding:0;list-style:none;color:var(--muted);font-size:.9rem}
+.howto li{padding:3px 0 3px 22px;position:relative}
+.howto li::before{content:"";position:absolute;left:4px;top:.72em;width:8px;height:8px;border-radius:50%;border:1.5px solid var(--muted)}
+.toggle{display:flex;align-items:center;gap:10px;margin:14px 0;font-size:.92rem}
+.toggle input{width:20px;height:20px;accent-color:var(--blue)}
+.queue{font-size:.9rem;color:var(--muted);margin:10px 0 4px}
+
+.paper{background:#fff;box-shadow:0 1px 0 rgba(0,0,0,.08),0 6px 18px -8px rgba(0,0,0,.35);margin:6px -4px 4px;overflow:hidden}
+.formview{position:relative;width:100%}
+.formview img{display:block;width:100%;height:auto}
+.formview svg{position:absolute;inset:0;width:100%;height:100%}
+.hit{fill:transparent;cursor:pointer}
+.ov-c{fill:none;stroke:#12823F;stroke-width:.6}
+.ov-w{fill:none;stroke:#D0281E;stroke-width:.6}
+.ov-s{fill:none;stroke:#2443C4;stroke-width:.6}
+.ov-k{fill:none;stroke:#12823F;stroke-width:.45;stroke-dasharray:.9 .6}
+.ov-f{fill:#F5B700;opacity:.3}
+.hint{font-size:.84rem;color:var(--muted);margin:2px 0 14px}
+
+.idrow{display:grid;grid-template-columns:1fr;gap:6px;margin:8px 0 12px}
+.idrow label{font-weight:700}
+.hand{display:block;max-width:300px;width:100%;background:#fff;border-radius:4px}
+.noin{font-size:1.5rem;font-weight:700;letter-spacing:.06em;padding:8px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);width:100%;max-width:300px}
+.noin.bad{border-color:var(--red)}
+.warn{color:var(--flag);font-size:.88rem}
+.err{color:var(--red);font-size:.88rem}
+
+.seg{display:inline-flex;border:1.5px solid var(--line);border-radius:10px;overflow:hidden}
+.seg button{border:0;background:var(--paper);padding:8px 14px;font-weight:500}
+.seg button+button{border-left:1.5px solid var(--line)}
+.seg button[aria-pressed="true"]{background:var(--blue);color:var(--on-blue)}
+
+.flagbox{border-left:4px solid var(--flag);background:var(--flag-bg);padding:10px 12px;margin:12px 0;border-radius:0 10px 10px 0}
+.flagbox h3{margin:0 0 6px;font-size:.95rem}
+.flagq{padding:8px 0;border-top:1px solid color-mix(in srgb,var(--flag) 35%,transparent)}
+.flagq:first-of-type{border-top:0}
+.flagq img{display:block;width:100%;max-width:300px;background:#fff;border-radius:4px;margin:6px 0}
+
+.tally{display:flex;gap:18px;flex-wrap:wrap;margin:14px 0 6px;align-items:baseline}
+.tally div{display:flex;flex-direction:column}
+.tally b{font-size:1.35rem;line-height:1.1}
+.tally span{font-size:.78rem;color:var(--muted)}
+.tally .score b{font-size:1.9rem;color:var(--blue)}
+.actions{display:flex;gap:10px;margin:12px 0}
+.actions .btn{flex:1;padding:14px}
+
+/* kabarcık düğmeler (anahtar ve cevap düzenleme) */
+.qlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:2px 18px;margin:8px 0}
+.qrow{display:flex;align-items:center;gap:6px;padding:4px 0}
+.qn{width:28px;text-align:right;font-weight:700;font-size:.9rem;flex:none}
+.bub{width:36px;height:36px;border-radius:50%;border:1.6px solid var(--muted);background:var(--paper);
+  font-size:.82rem;font-weight:500;display:grid;place-items:center;padding:0;flex:none;color:var(--muted)}
+.bub.on{background:var(--blue);border-color:var(--blue);color:var(--on-blue)}
+.bub.on.c{background:var(--green);border-color:var(--green)}
+.bub.on.w{background:var(--red);border-color:var(--red)}
+.bub.key{border-color:var(--green);border-style:dashed;border-width:2px}
+.chip{border:1.5px solid var(--line);border-radius:999px;background:var(--paper);padding:6px 10px;font-size:.8rem;font-weight:500;flex:none}
+.chip.on{border-color:var(--ink);background:var(--ink);color:var(--paper)}
+
+details.all{margin:10px 0}
+details.all summary{cursor:pointer;color:var(--blue);font-weight:500;padding:8px 0}
+
+/* Sonuçlar */
+.stats{display:flex;flex-wrap:wrap;gap:8px 0;margin:10px 0 14px}
+.stats div{padding:0 16px;border-left:1px solid var(--line)}
+.stats div:first-child{padding-left:0;border-left:0}
+.stats b{display:block;font-size:1.3rem;line-height:1.2}
+.stats span{font-size:.75rem;color:var(--muted)}
+.tools{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 10px}
+.matrix{background:var(--paper);border-radius:12px;padding:6px 8px 10px;border:1px solid var(--line)}
+.mrow{display:grid;grid-template-columns:minmax(86px,auto) 42px 1fr;gap:8px;align-items:center;padding:5px 2px;border:0;background:none;width:100%;text-align:left;border-top:1px solid var(--soft)}
+.mrow.head{border-top:0;font-size:.72rem;color:var(--muted);position:sticky;top:env(safe-area-inset-top,0px);background:var(--paper);z-index:2}
+.mrow .no{font-weight:500;font-size:.92rem;white-space:nowrap}
+.mrow .sc{font-weight:700;text-align:right}
+.strip{display:grid;gap:2px}
+.strip i{height:16px;border-radius:2px;display:block}
+.strip i.c{background:var(--green)}
+.strip i.w{background:var(--red)}
+.strip i.b{background:var(--line)}
+.strip i.u{background:repeating-linear-gradient(45deg,var(--line) 0 2px,transparent 2px 4px)}
+.strip.headstrip button{height:30px;border:0;border-radius:3px;padding:0;font-size:.62rem;font-weight:700;color:var(--ink);display:grid;place-items:center}
+.strip.headstrip button.lab{position:relative;z-index:1;overflow:visible;white-space:nowrap}
+.empty{padding:28px 6px;text-align:center;color:var(--muted)}
+.qa-sum{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin:10px 0}
+.qa-sum p{margin:4px 0}
+.qa-chart{display:block;width:100%;height:auto;margin:4px 0 2px}
+.qa-chart .g{stroke:var(--line);stroke-width:.6;stroke-dasharray:3 3}
+.qa-chart text{fill:var(--muted);font-size:9px}
+.qa-chart rect.bar{cursor:pointer}
+.qa-list{background:var(--paper);border:1px solid var(--line);border-radius:12px;padding:4px 10px}
+.qa-row{display:grid;grid-template-columns:30px 1fr 44px;gap:4px 10px;align-items:center;width:100%;border:0;background:none;text-align:left;padding:9px 0;border-top:1px solid var(--soft)}
+.qa-row:first-child{border-top:0}
+.qa-n{font-weight:700}
+.qa-bar{height:10px;border-radius:5px;background:var(--soft);overflow:hidden}
+.qa-bar i{display:block;height:100%;border-radius:5px}
+.qa-p{font-weight:700;text-align:right}
+.qa-meta{grid-column:2 / 4;font-size:.8rem;color:var(--muted)}
+.tag{display:inline-block;font-size:.72rem;font-weight:500;border-radius:6px;padding:0 6px;margin-right:4px;border:1px solid currentColor}
+.tag.ok{color:var(--green)}.tag.mid{color:var(--muted)}.tag.bad{color:var(--red)}
+.qa-text{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:6px 0 10px}
+
+/* Anahtar */
+.field{display:grid;gap:4px;margin:10px 0}
+.field label{font-weight:500;font-size:.92rem}
+.field input,.field select,.field textarea{padding:10px 12px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);width:100%}
+.field textarea{font:inherit;line-height:1.45;resize:vertical;min-height:96px}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-top:22px}
+.sechead h2{margin:0 0 6px}
+.qcard{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0}
+.brmark{font-size:.74rem;color:var(--muted);border-bottom:1px dashed var(--line);margin:-2px 0 8px;padding-bottom:4px}
+.qtop{display:flex;gap:8px;align-items:baseline}
+.qnum{flex:none;min-width:1.7em}
+.qstem{flex:1;min-width:0;overflow-wrap:anywhere}
+.qchs{display:flex;flex-wrap:wrap;gap:4px 18px;margin:6px 0 2px 2.3em;font-size:.95rem}
+.qch b{font-weight:500;color:var(--muted)}
+.qch.ok b{color:var(--green);font-weight:700}
+.qbar{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:8px;border-top:1px solid var(--soft);padding-top:8px}
+.kb{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.kbub{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--muted);background:var(--paper);font-size:.76rem;font-weight:500;padding:0;color:var(--muted);flex:none}
+.kbub.on{background:var(--green);border-color:var(--green);color:#fff}
+.icon{width:34px;height:34px;border:1.5px solid var(--line);border-radius:8px;background:var(--paper);display:grid;place-items:center;padding:0;flex:none}
+.icon svg{width:16px;height:16px}
+.icon:disabled{opacity:.35;cursor:default}
+.btn.sm{padding:7px 12px;font-size:.9rem}
+.chip.sm{padding:5px 9px;font-size:.74rem}
+svg.mj{display:inline-block;overflow:visible}
+.dm{display:block;text-align:center;margin:4px 0}
+svg.mj.bad{color:var(--red)}
+.rawtex{color:var(--muted)}
+.chrow{display:flex;align-items:center;gap:8px;margin:5px 0}
+.chrow span{width:24px;font-weight:500;color:var(--muted);flex:none}
+.chrow input{flex:1;padding:9px 11px;border:1.5px solid var(--line);border-radius:10px;background:var(--paper);min-width:0}
+.qprev{background:var(--paper);border:1px dashed var(--line);border-radius:10px;padding:10px 12px;min-height:56px}
+.pvh{font-size:.95rem;margin:16px 0 6px}
+.pv svg.pg{display:block;width:100%;height:auto;margin:14px 0;box-shadow:0 1px 0 rgba(0,0,0,.08),0 6px 18px -8px rgba(0,0,0,.35)}
+.emptybox{background:var(--paper);border:1.5px dashed var(--line);border-radius:12px;padding:16px;margin:8px 0}
+.outbtns{margin:6px 0}
+.outbtns .btn{flex:1 1 auto}
+.bpos{flex:none;font-size:.72rem;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:1px 6px;align-self:flex-start}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 12px}
+
+/* Sayfa altı paneli */
+.sheet{position:fixed;inset:0;z-index:50;background:rgba(10,12,15,.45);display:flex;align-items:flex-end;justify-content:center}
+.sheet[hidden]{display:none}
+.sheet-panel{background:var(--bg);width:100%;max-width:760px;max-height:92vh;max-height:92dvh;overflow:auto;border-radius:16px 16px 0 0;
+  padding:14px 16px calc(20px + env(safe-area-inset-bottom,0px))}
+.sheet-head{display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:-14px;background:var(--bg);padding:4px 0 8px;z-index:3}
+.sheet-head h2{margin:0}
+.exlist{list-style:none;margin:0;padding:0}
+.exlist button{width:100%;text-align:left;background:var(--paper);border:1.5px solid var(--line);border-radius:10px;padding:12px;margin:6px 0;display:flex;justify-content:space-between;gap:8px}
+.exlist button[aria-current="true"]{border-color:var(--blue)}
+.dist{display:grid;grid-template-columns:44px 1fr auto;gap:6px 10px;align-items:center;margin:10px 0}
+.dist span{white-space:nowrap;font-size:.9rem}
+.dist .bar{height:18px;background:var(--line);border-radius:3px}
+.dist .bar.k{background:var(--green)}
+
+#toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;
+  background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:10px;font-size:.92rem;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90vw}
+#toast.show{opacity:1}
+.spinner{width:28px;height:28px;border:3px solid var(--line);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite;margin:30px auto 10px}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion: reduce){.spinner{animation-duration:3s}#toast{transition:none}}
+@media (max-width:420px){.stats div{padding:0 12px}.mrow{grid-template-columns:minmax(78px,auto) 36px 1fr;gap:6px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <button class="exam-switch" data-act="exams" aria-label="Sınav değiştir">
+    <span id="examName">Optik Okuyucu</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+  <span id="storeNote" class="store-note"></span>
+</header>
+<main>
+  <section id="tab-design"></section>
+  <section id="tab-scan" hidden></section>
+  <section id="tab-results" hidden></section>
+</main>
+<nav class="tabbar" aria-label="Bölümler">
+  <button data-act="tab" data-tab="design" aria-current="page">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 12h7M9 16h7"/></svg>Sınav</button>
+  <button data-act="tab" data-tab="scan">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Tara</button>
+  <button data-act="tab" data-tab="results">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/><path d="M14 4v4M9 10v4M17 16v4"/></svg>Sonuçlar</button>
+</nav>
+<div id="sheet" class="sheet" hidden>
+  <div class="sheet-panel" role="dialog" aria-modal="true" id="sheetBody"></div>
+</div>
+<div id="toast" role="status" aria-live="polite"></div>
+<input type="file" id="camIn" accept="image/*" capture="environment" hidden>
+<input type="file" id="galIn" accept="image/*" multiple hidden>
+<input type="file" id="texIn" hidden>
+
+<script>
+/*OMR*/
+</script>
+<script>
+(function () {
+'use strict';
+const LET = 'ABCDE';
+const $ = (s, r) => (r || document).querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const fmt = (n, d = 1) => (Number.isFinite(n) ? n.toLocaleString('tr-TR', { maximumFractionDigits: d }) : '–');
+const ls = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
+};
+let toastT = null;
+function toast(msg) {
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 2600);
+}
+
+/* ---------------- durum ---------------- */
+const app = {
+  exams: [], examId: ls.get('omr.exam'), exam: null, results: [],
+  tab: ['design', 'scan', 'results'].indexOf(ls.get('omr.tab')) >= 0 ? ls.get('omr.tab') : 'design', queue: [], cur: null, busy: false, errCard: null,
+  qedit: null, importData: null, outBusy: false,
+  sort: 'no', rview: ls.get('omr.rview') === 'qa' ? 'qa' : 'st', qsort: 'no',
+  autoSave: ls.get('omr.auto') === '1',
+  storeReady: false, dbSlow: false, dbError: null, downloads: null, topLevel: !window.claude,
+  edit: null, delArm: false, sheetKind: null
+};
+
+function normQ(q) {
+  q = q || {};
+  return { s: String(q.s || ''), c: Array.from({ length: 5 }, (_, i) => String((q.c || [])[i] || '')), k: String(q.k || ''),
+    lay: ['auto', 'row', 'col'].indexOf(q.lay) >= 0 ? q.lay : 'auto', br: !!q.br };
+}
+function normExam(e) {
+  const questions = Array.isArray(e.questions) ? e.questions.map(normQ) : [];
+  const hasQ = questions.length > 0;
+  const nq = hasQ ? Math.min(30, questions.length) : Math.max(1, Math.min(30, +e.nq || 20));
+  const keyA = hasQ ? questions.slice(0, nq).map(q => q.k) : Array.from({ length: nq }, (_, i) => (e.keyA && e.keyA[i]) || '');
+  const title = e.title != null ? String(e.title) : String(e.name || '');
+  return { id: e.id, name: title.trim() || 'Adsız sınav', title, date: e.date || '', dur: e.dur != null ? e.dur : '75 dk',
+    note: e.note != null ? e.note : Studio.DEFAULT_NOTE, nq, nd: Math.max(4, Math.min(12, +e.nd || 6)), penalty: +e.penalty || 0,
+    questions, keyA, keyOnly: !hasQ && (!!e.keyOnly || (e.keyA || []).some(Boolean)), created: e.created || Date.now(),
+    booklets: +e.booklets === 2 && hasQ ? 2 : 1, bseed: (+e.bseed >>> 0) || 0, bch: !!e.bch };
+}
+function syncDerived(ex) {
+  const n = normExam(ex);
+  ex.nq = n.nq; ex.keyA = n.keyA; ex.keyOnly = n.keyOnly; ex.name = n.name; ex.booklets = n.booklets;
+  if (ex.booklets === 2 && !ex.bseed) ex.bseed = newSeed();
+}
+function setKey(ex, q, k) {
+  if (ex.questions.length) { if (ex.questions[q]) ex.questions[q].k = k; }
+  ex.keyA[q] = k;
+}
+
+/* ---------------- depolama ---------------- */
+const store = {
+  mode: 'loading', db: null, uid: null, resUnsub: null, mem: { exams: {}, results: {} }, q: {},
+  async init() {
+    let db = null, user = null, dl = null;
+    if (window.claude && typeof window.claude.use === 'function') {
+      try { [db, user, dl] = await Promise.all([window.claude.use('db'), window.claude.use('user'), window.claude.use('downloads')]); } catch (e) {}
+    }
+    app.downloads = dl;
+    const uid = user ? await user.id() : null;
+    if (db && uid) {
+      this.mode = 'db'; this.db = db; this.uid = uid; this.subExams();
+    } else {
+      this.mode = 'mem'; app.storeReady = true; onExams([]);
+    }
+    renderTop();
+  },
+  base() { return 'data/users/' + this.uid; },
+  subExams() {
+    const t = setTimeout(() => { app.dbSlow = true; renderTop(); }, 10000);
+    this.db.collection(this.base()).onSnapshot(snap => {
+      if (!snap.metadata.fromCache) { clearTimeout(t); app.dbSlow = false; }
+      app.storeReady = true;
+      onExams(snap.docs.filter(d => d.data().kind === 'exam').map(d => Object.assign({ id: d.id }, d.data())));
+    }, err => { clearTimeout(t); app.dbError = err.code; app.storeReady = true; renderAll(); });
+  },
+  watchResults(examId) {
+    if (this.resUnsub) { this.resUnsub(); this.resUnsub = null; }
+    if (!examId) { onResults([]); return; }
+    if (this.mode === 'db') {
+      this.resUnsub = this.db.doc(this.base() + '/' + examId).collection('results').onSnapshot(
+        snap => onResults(snap.docs.map(d => Object.assign({ id: d.id }, d.data()))),
+        err => { app.dbError = err.code; renderTop(); });
+    } else onResults(Object.values(this.mem.results[examId] || {}));
+  },
+  serial(path, fn) {
+    const prev = this.q[path] || Promise.resolve();
+    const p = prev.then(fn, fn);
+    this.q[path] = p.catch(() => {});
+    return p;
+  },
+  async saveExam(ex) {
+    const data = Object.assign({}, ex, { kind: 'exam' }); delete data.id;
+    if (this.mode === 'db') { const path = this.base() + '/' + ex.id; return this.serial(path, () => this.db.doc(path).set(data)); }
+    this.mem.exams[ex.id] = Object.assign({ id: ex.id }, data); onExams(Object.values(this.mem.exams));
+  },
+  async deleteExam(id) {
+    if (this.mode === 'db') {
+      const col = this.db.doc(this.base() + '/' + id).collection('results');
+      const snap = await col.get();
+      for (const d of snap.docs) await col.doc(d.id).delete();
+      await this.db.doc(this.base() + '/' + id).delete();
+    } else { delete this.mem.exams[id]; delete this.mem.results[id]; onExams(Object.values(this.mem.exams)); }
+  },
+  async saveResult(examId, rec) {
+    if (this.mode === 'db') {
+      const path = this.base() + '/' + examId + '/results/' + rec.no;
+      return this.serial(path, () => this.db.doc(path).set(rec));
+    }
+    (this.mem.results[examId] = this.mem.results[examId] || {})[rec.no] = Object.assign({ id: rec.no }, rec);
+    onResults(Object.values(this.mem.results[examId]));
+  },
+  async deleteResult(examId, no) {
+    if (this.mode === 'db') {
+      const path = this.base() + '/' + examId + '/results/' + no;
+      return this.serial(path, () => this.db.doc(path).delete());
+    }
+    delete (this.mem.results[examId] || {})[no]; onResults(Object.values(this.mem.results[examId] || {}));
+  }
+};
+
+function dbErrMsg(e) {
+  const c = e && e.code;
+  if (c === 'quota_exceeded') return 'Depolama alanı doldu. Eski bir sınavı silip yeniden deneyin.';
+  if (c === 'invalid_argument') return 'Kayıt reddedildi; bu görünümde yazma izniniz olmayabilir.';
+  if (c === 'resource_exhausted') return 'Çok hızlı kayıt yapılıyor, birkaç saniye sonra tekrar deneyin.';
+  return 'Kayıt yapılamadı (' + (c || 'bilinmeyen hata') + '). Tekrar deneyin.';
+}
+
+let pendingExamSave = null;
+function onExams(list) {
+  app.exams = list.map(normExam).sort((a, b) => b.created - a.created);
+  if (pendingExamSave && app.exam) {
+    const i = app.exams.findIndex(e => e.id === app.exam.id);
+    if (i >= 0) app.exams[i] = app.exam;
+  }
+  let ex = app.exams.find(e => e.id === app.examId) || app.exams[0] || null;
+  const changed = (ex && ex.id) !== (app.exam && app.exam.id);
+  app.exam = ex; app.examId = ex ? ex.id : null;
+  if (changed) { store.watchResults(app.examId); if (ex) ls.set('omr.exam', ex.id); renderAll(); return; }
+  // aynı sınav: yazı yazılan alanı yeniden çizip imleci kaçırma
+  renderTop();
+  const ae = document.activeElement;
+  const typing = ae && ae.closest && ae.closest('#tab-design') && /^(INPUT|TEXTAREA|SELECT)$/.test(ae.tagName);
+  if (!typing) renderDesign();
+  renderResults();
+  if (!app.cur && !app.busy && !app.errCard) renderScan();
+}
+function onResults(list) {
+  app.results = list;
+  if (app.tab === 'results') renderResults();
+  if (!app.cur && !app.busy && !app.errCard) renderScan();
+  else if (app.cur) updateDupMsg();
+}
+function updateDupMsg() {
+  const m = $('#noMsg'), c = app.cur; if (!m || !c) return;
+  const dup = /^\d+$/.test(c.no) && app.results.find(r => r.no === c.no);
+  m.innerHTML = dup ? '<span class="warn">Bu numara zaten kayıtlı. Kaydederseniz eski kayıt yenisiyle değişir.</span>' : '';
+}
+
+function scheduleExamSave() {
+  clearTimeout(pendingExamSave);
+  const ex = app.exam;
+  pendingExamSave = setTimeout(async () => {
+    pendingExamSave = null;
+    try { await store.saveExam(ex); } catch (e) { toast(dbErrMsg(e)); }
+  }, 500);
+}
+
+/* ---------------- puanlama ---------------- */
+function keyOf(exam) { return exam.keyA; }
+function newSeed() { return (Math.floor(Math.random() * 2147483646) + 1) >>> 0; }
+function prng(seed) {
+  let a = seed >>> 0;
+  return () => { a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; };
+}
+function shuffledIdx(n, r) { const p = Array.from({ length: n }, (_, i) => i); for (let i = n - 1; i > 0; i--) { const j = Math.floor(r() * (i + 1)); [p[i], p[j]] = [p[j], p[i]]; } return p; }
+const bmCache = new Map();
+// B kitapçığı: perm[j] = B'de j. sıradaki sorunun A'daki indisi; ch[j][b] = B'de b. şıkkın A'daki indisi
+function bookletMap(ex) {
+  const n = ex.nq, key = ex.id + '|' + n + '|' + ex.bseed + '|' + (ex.bch ? 1 : 0);
+  if (bmCache.has(key)) return bmCache.get(key);
+  const r = prng(ex.bseed || 1);
+  let perm = shuffledIdx(n, r);
+  for (let t = 0; t < 30 && n > 3 && perm.filter((v, i) => v === i).length > Math.max(1, Math.floor(n * 0.1)); t++) perm = shuffledIdx(n, r);
+  const ch = perm.map(() => ex.bch ? shuffledIdx(5, r) : [0, 1, 2, 3, 4]);
+  const bm = { perm, ch };
+  bmCache.set(key, bm);
+  return bm;
+}
+function mapKeyLetters(k, chj) {
+  if (!k || k === 'X') return k || '';
+  return k.split('').map(L2 => LET[chj.indexOf(LET.indexOf(L2))]).filter(Boolean).sort().join('');
+}
+function formKey(ex, bk) {
+  if (ex.booklets !== 2 || bk !== 'B') return ex.keyA;
+  const bm = bookletMap(ex);
+  return bm.perm.map((qa, j) => mapKeyLetters(ex.keyA[qa] || '', bm.ch[j]));
+}
+function toA(ex, ans) {
+  const bm = bookletMap(ex), arr = new Array(ex.nq).fill('.');
+  bm.perm.forEach((qa, j) => { const a = ans[j] || '.', i = LET.indexOf(a); arr[qa] = i >= 0 ? LET[bm.ch[j][i]] : a; });
+  return arr.join('');
+}
+function viewExam(ex, bk) {
+  const base = { title: ex.title, date: ex.date, dur: ex.dur, note: ex.note, nd: ex.nd };
+  if (ex.booklets !== 2) return Object.assign(base, { questions: ex.questions, bk: '' });
+  if (bk !== 'B') return Object.assign(base, { questions: ex.questions, bk: 'A' });
+  const bm = bookletMap(ex), Q = ex.questions;
+  const qs = bm.perm.map((qa, j) => ({ s: Q[qa].s, c: bm.ch[j].map(o => Q[qa].c[o]), k: mapKeyLetters(Q[qa].k, bm.ch[j]), lay: Q[qa].lay, br: false }));
+  return Object.assign(base, { questions: qs.concat(Q.slice(bm.perm.length)), bk: 'B' });
+}
+function grade(exam, r) {
+  const bk = exam.booklets === 2 && r.bk === 'B' ? 'B' : 'A';
+  const key = formKey(exam, bk), ans = r.ans || '';
+  let D = 0, Y = 0, B = 0, U = 0; const marks = [];
+  for (let i = 0; i < exam.nq; i++) {
+    const a = ans[i] || '.', k = key[i] || '';
+    let m;
+    if (k === 'X') m = 'c';
+    else if (!k) m = 'u';
+    else if (a === '.') m = 'b';
+    else if (a !== '*' && k.indexOf(a) >= 0) m = 'c';
+    else m = 'w';
+    marks.push(m);
+    if (m === 'c') D++; else if (m === 'w') Y++; else if (m === 'b') B++; else U++;
+  }
+  const net = Math.max(0, D - exam.penalty * Y);
+  const score = Math.round(net * 100 / exam.nq * 100) / 100;
+  let marksA = marks, ansA = ans;
+  if (bk === 'B') {
+    const bm = bookletMap(exam);
+    marksA = new Array(exam.nq).fill('u');
+    bm.perm.forEach((qa, j) => { marksA[qa] = marks[j]; });
+    ansA = toA(exam, ans);
+  }
+  return { D, Y, B, U, net, score, marks, marksA, ansA, bk };
+}
+
+/* ---------------- görüntü işleme ---------------- */
+async function loadBitmap(file) {
+  if (window.createImageBitmap) {
+    try { return await createImageBitmap(file, { imageOrientation: 'from-image' }); } catch (e) {}
+    try { return await createImageBitmap(file); } catch (e) {}
+  }
+  return await new Promise((res, rej) => {
+    const url = URL.createObjectURL(file); const im = new Image();
+    im.onload = () => res(im); im.onerror = () => rej(new Error('img')); im.src = url;
+  });
+}
+function toWork(bmp, maxSide) {
+  const w0 = bmp.width, h0 = bmp.height, s = Math.min(1, maxSide / Math.max(w0, h0));
+  const w = Math.round(w0 * s), h = Math.round(h0 * s);
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const ctx = c.getContext('2d', { willReadFrequently: true });
+  ctx.drawImage(bmp, 0, 0, w, h);
+  return { canvas: c, w, h, data: ctx.getImageData(0, 0, w, h).data };
+}
+function rectify(H, src, w, h, L) {
+  const S = 5, pad = 6;
+  const OW = Math.round((L.W + 2 * pad) * S), OH = Math.round((L.H + 2 * pad) * S);
+  const c = document.createElement('canvas'); c.width = OW; c.height = OH;
+  const ctx = c.getContext('2d'); const img = ctx.createImageData(OW, OH); const d = img.data;
+  for (let y = 0; y < OH; y++) {
+    const Y = y / S - pad;
+    for (let x = 0; x < OW; x++) {
+      const X = x / S - pad, z = H[6] * X + H[7] * Y + 1;
+      const u = (H[0] * X + H[1] * Y + H[2]) / z, v = (H[3] * X + H[4] * Y + H[5]) / z;
+      const o = (y * OW + x) * 4;
+      if (u < 0 || v < 0 || u >= w - 1 || v >= h - 1) { d[o] = d[o + 1] = d[o + 2] = 255; d[o + 3] = 255; continue; }
+      const x0 = u | 0, y0 = v | 0, fx = u - x0, fy = v - y0, i = (y0 * w + x0) * 4, j = i + w * 4;
+      for (let k = 0; k < 3; k++)
+        d[o + k] = (src[i + k] * (1 - fx) + src[i + 4 + k] * fx) * (1 - fy) + (src[j + k] * (1 - fx) + src[j + 4 + k] * fx) * fy;
+      d[o + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  let url = c.toDataURL('image/jpeg', 0.62);
+  if (url.length > 190000) url = c.toDataURL('image/jpeg', 0.45);
+  return { canvas: c, url, S, pad };
+}
+function crop(cur, x0, y0, x1, y1) {
+  const S = cur.S, p = cur.pad;
+  const cv = document.createElement('canvas');
+  cv.width = Math.round((x1 - x0) * S * 2); cv.height = Math.round((y1 - y0) * S * 2);
+  cv.getContext('2d').drawImage(cur.canvas, (x0 + p) * S, (y0 + p) * S, (x1 - x0) * S, (y1 - y0) * S, 0, 0, cv.width, cv.height);
+  return cv.toDataURL('image/jpeg', 0.85);
+}
+
+function numFromDigits(ds) {
+  return ds.map(d => d.v >= 0 ? String(d.v) : d.v === -2 ? '?' : ' ').join('').replace(/\s+$/, '').replace(/ /g, '?');
+}
+function buildReview(res, rect, exam) {
+  const digits = res.digits.map(d => ({ v: d.v, flag: d.flag || d.v === -2 }));
+  const ans = res.answers.map(a => a.v >= 0 ? LET[a.v] : a.v === -1 ? '.' : '*');
+  const aFlag = res.answers.map(a => !!(a.flag || a.v === -2));
+  const aWhy = res.answers.map(a => {
+    if (a.v === -2) return 'birden fazla şık işaretli';
+    if (!a.flag) return '';
+    const strong = a.ds.filter(x => x >= res.T - 0.06).length;
+    return strong > 1 ? 'bir şıkta silinmiş iz olabilir' : 'işaret silik';
+  });
+  let bk = '', bkFlag = false;
+  if (exam.booklets === 2 && res.booklet) {
+    const b = res.booklet; bk = b.v === 0 ? 'A' : b.v === 1 ? 'B' : '';
+    bkFlag = !!(b.flag || b.v < 0);
+  }
+  const cur = { L: res.layout, img: rect.url, canvas: rect.canvas, S: rect.S, pad: rect.pad,
+    digits, ans, aFlag, aWhy, multi: res.answers.map(a => a.multi || null), bk, bkFlag,
+    pts: { d: res.digits.map(d => d.pts), a: res.answers.map(a => a.pts), b: res.booklet ? res.booklet.pts : null },
+    pxmm: res.pxmm, edited: false };
+  cur.no = numFromDigits(digits);
+  const L = res.layout;
+  cur.hand = crop(cur, 5.6, 9.6, 9 + (L.N - 1) * 5 + 3.4, 16.4);
+  cur.rowCrop = {};
+  return cur;
+}
+function rowCrop(cur, q) {
+  if (!cur.rowCrop[q]) {
+    const p = cur.pts.a[q];
+    cur.rowCrop[q] = crop(cur, p[0].x - 8.5, p[0].y - 3.6, p[4].x + 3.6, p[0].y + 3.6);
+  }
+  return cur.rowCrop[q];
+}
+
+/* ---------------- kuyruk ---------------- */
+async function addFiles(files) {
+  if (!app.exam) { toast('Önce bir sınav oluşturun.'); return; }
+  if (app.errCard) { app.errCard = null; app.queue.unshift(...files); }
+  else for (const f of files) app.queue.push(f);
+  if (!app.cur && !app.busy) nextInQueue();
+  else renderScan();
+}
+async function nextInQueue() {
+  app.cur = null; app.errCard = null;
+  const f = app.queue.shift();
+  if (!f) { app.busy = false; renderScan(); return; }
+  app.busy = true; renderScan();
+  await new Promise(r => setTimeout(r, 40));
+  const exam = app.exam;
+  try {
+    const bmp = await loadBitmap(f);
+    const wk = toWork(bmp, 1800);
+    if (bmp.close) bmp.close();
+    const res = OMR.read(wk.data, wk.w, wk.h, exam.nd, exam.nq, exam.booklets === 2);
+    if (!res.ok) {
+      app.busy = false;
+      app.errCard = { thumb: wk.canvas.toDataURL('image/jpeg', 0.5), msg: res.error === 'layout'
+        ? 'Form bulundu ama bu sınavın ayarlarıyla uyuşmuyor (soru sayısı, numara hanesi ya da kitapçık). Kağıdın bu sınavın şu anki PDF’inden basıldığından emin olun.'
+        : 'Formun dört köşesindeki siyah kareler bulunamadı.' };
+      renderScan(); return;
+    }
+    const rect = rectify(res.H, wk.data, wk.w, wk.h, res.layout);
+    app.cur = buildReview(res, rect, exam);
+    app.busy = false;
+    if (app.autoSave && cleanCur()) { await saveCurrent(true); return; }
+    renderScan();
+    window.scrollTo({ top: 0 });
+  } catch (e) {
+    app.busy = false;
+    app.errCard = { thumb: null, msg: 'Fotoğraf açılamadı. Başka bir fotoğrafla deneyin.' };
+    renderScan();
+  }
+}
+function curIssues() {
+  const c = app.cur, ex = app.exam, out = [];
+  if (!c) return out;
+  if (!/^\d+$/.test(c.no)) out.push('Öğrenci numarası okunamadı; elle yazın.');
+  else if (c.no.length !== ex.nd) out.push('Numara ' + ex.nd + ' haneli olmalı; okunan ' + c.no.length + ' hane.');
+  if (c.digits.some(d => d.flag)) out.push('Numaranın bazı hanelerinden emin değilim.');
+  if (ex.booklets === 2 && (!c.bk || c.bkFlag)) out.push('Kitapçık türü formdan okunamadı; aşağıdan seçin.');
+  return out;
+}
+function cleanCur() {
+  const c = app.cur; if (!c) return false;
+  return curIssues().length === 0 && !c.aFlag.some(Boolean) && !app.results.some(r => r.no === c.no);
+}
+async function saveCurrent(auto) {
+  const c = app.cur, ex = app.exam;
+  if (!c) return;
+  const no = (c.no || '').trim();
+  if (!/^\d+$/.test(no) || no.length !== ex.nd) { toast('Öğrenci numarası ' + ex.nd + ' haneli olmalı.'); renderScan(); return; }
+  if (ex.booklets === 2 && !c.bk) { toast('Önce kitapçık türünü seçin.'); renderScan(); return; }
+  const rec = { no, bk: ex.booklets === 2 ? c.bk : '', ans: c.ans.join(''), img: c.img, at: Date.now(), edited: !!c.edited };
+  try {
+    await store.saveResult(ex.id, rec);
+    const g = grade(ex, rec);
+    toast(no + ' kaydedildi' + (g.U ? '' : ', ' + fmt(g.score, 2) + ' puan') + (auto ? ' (otomatik)' : ''));
+    nextInQueue();
+  } catch (e) { toast(dbErrMsg(e)); renderScan(); }
+}
+
+/* ---------------- SVG kaplama ---------------- */
+function overlay(exam, L, pts, rec, opts) {
+  opts = opts || {};
+  const pad = 6, g = grade(exam, rec);
+  const key = formKey(exam, g.bk);
+  let s = '<svg viewBox="' + (-pad) + ' ' + (-pad) + ' ' + (L.W + 2 * pad) + ' ' + (L.H + 2 * pad) + '" aria-hidden="true">';
+  const box = (ps, k) => {
+    let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+    for (const p of ps) { x0 = Math.min(x0, p.x); y0 = Math.min(y0, p.y); x1 = Math.max(x1, p.x); y1 = Math.max(y1, p.y); }
+    return '<rect class="ov-f" x="' + (x0 - 2.9 - (k || 0)) + '" y="' + (y0 - 2.9) + '" width="' + (x1 - x0 + 5.8 + (k || 0)) + '" height="' + (y1 - y0 + 5.8) + '" rx="1.5"/>';
+  };
+  const ring = (p, cls) => '<circle class="' + cls + '" cx="' + p.x + '" cy="' + p.y + '" r="2.45"/>';
+  const hit = (p, k, gi, i) => opts.interactive ? '<circle class="hit" data-act="ovtap" data-k="' + k + '" data-g="' + gi + '" data-i="' + i + '" cx="' + p.x + '" cy="' + p.y + '" r="2.5"/>' : '';
+  // numara
+  pts.d.forEach((col, j) => {
+    if (opts.flags && opts.flags.d[j]) s += box(col);
+    const v = rec.digits[j];
+    if (v >= 0) s += ring(col[v], 'ov-s');
+    col.forEach((p, i) => s += hit(p, 'd', j, i));
+  });
+  if (pts.b) {
+    if (opts.flags && opts.flags.b) s += box(pts.b);
+    if (rec.bk === 'A' || rec.bk === 'B') s += ring(pts.b[rec.bk === 'A' ? 0 : 1], 'ov-s');
+  }
+  pts.a.forEach((row, q) => {
+    if (opts.flags && opts.flags.a[q]) s += box(row, 6);
+    const a = rec.ans[q] || '.', m = g.marks[q], k = key[q] || '';
+    const chosen = a === '*' ? (opts.multi && opts.multi[q] ? opts.multi[q] : []) : a === '.' ? [] : [LET.indexOf(a)];
+    chosen.forEach(i => { s += ring(row[i], m === 'u' ? 'ov-s' : m === 'c' ? 'ov-c' : 'ov-w'); });
+    if ((m === 'w' || m === 'b') && k !== 'X') for (const ch of k) { const i = LET.indexOf(ch); if (i >= 0 && chosen.indexOf(i) < 0) s += ring(row[i], 'ov-k'); }
+    row.forEach((p, i) => s += hit(p, 'a', q, i));
+  });
+  return s + '</svg>';
+}
+
+/* ---------------- çizim: üst ---------------- */
+function renderTop() {
+  $('#examName').textContent = app.exam ? app.exam.name : 'Sınav Stüdyosu';
+  let note = '';
+  if (store.mode === 'mem' && app.storeReady) note = 'Bu görünümde kayıt yok: sayfa kapanınca sonuçlar silinir.';
+  else if (app.dbError) note = 'Kayıtlara ulaşılamıyor (' + app.dbError + ').';
+  else if (app.dbSlow) note = 'Kayıtlara henüz ulaşılamadı; liste güncel olmayabilir.';
+  $('#storeNote').textContent = note;
+  document.querySelectorAll('.tabbar button').forEach(b => b.setAttribute('aria-current', b.dataset.tab === app.tab ? 'page' : 'false'));
+  ['design', 'scan', 'results'].forEach(t => { $('#tab-' + t).hidden = t !== app.tab; });
+}
+function renderAll() { renderTop(); renderScan(); renderResults(); renderDesign(); }
+
+function noExamBlock() {
+  if (!app.storeReady) return '<div class="spinner" role="progressbar" aria-label="Yükleniyor"></div><p class="empty">Kayıtlar yükleniyor…</p>';
+  return '<h2>İlk sınavınızı oluşturun</h2>' +
+    '<p class="muted">Sorular, optik form, cevap anahtarı ve okunan kağıtlar bu sınavın altında toplanır.</p>' +
+    '<div class="field"><label for="newName">Sınav başlığı</label><input id="newName" value="Diferansiyel Denklemler Final Sınavı"></div>' +
+    '<div class="field"><label for="newNd">Öğrenci numarası hane sayısı</label><select id="newNd">' + opts(4, 12, 6) + '</select></div>' +
+    '<div class="actions"><button class="btn primary" data-act="create">Sınavı oluştur</button></div>';
+}
+function opts(a, b, sel) { let s = ''; for (let i = a; i <= b; i++) s += '<option value="' + i + '"' + (i === sel ? ' selected' : '') + '>' + i + '</option>'; return s; }
+
+/* ---------------- çizim: Tara ---------------- */
+function renderScan() {
+  const el = $('#tab-scan'), ex = app.exam;
+  if (!ex) { el.innerHTML = noExamBlock(); return; }
+  if (!ex.questions.length && !ex.keyOnly && !app.results.length) {
+    el.innerHTML = '<p class="empty">Bu sınavın henüz sorusu yok. Optik formun soru sayısı sorulardan çıktığı için önce Sınav sekmesinde soruları ekleyin.</p>' +
+      '<div class="actions"><button class="btn primary" data-act="tab" data-tab="design">Sınav sekmesine git</button></div>';
+    return;
+  }
+  const qn = app.queue.length;
+  if (app.busy) {
+    el.innerHTML = '<div class="spinner" role="progressbar" aria-label="Okunuyor"></div><p class="empty">Kağıt okunuyor…' + (qn ? '<br>Sırada ' + qn + ' kağıt daha var.' : '') + '</p>';
+    return;
+  }
+  if (app.errCard) {
+    el.innerHTML = '<h2>Bu fotoğraf okunamadı</h2><p>' + esc(app.errCard.msg) + '</p>' +
+      '<p class="muted small">Kağıdı düz bir yüzeye koyun, telefonu tam üstünde tutun ve dört siyah karenin de görüntüye girdiğinden emin olun. Anahtar sekmesindeki hane ve soru sayısı formla aynı olmalı.</p>' +
+      (app.errCard.thumb ? '<img src="' + app.errCard.thumb + '" alt="Okunamayan fotoğraf" style="max-height:260px;border-radius:6px;margin:8px 0">' : '') +
+      '<div class="actions"><button class="btn" data-act="skip">Atla' + (qn ? ' (sırada ' + qn + ')' : '') + '</button><button class="btn primary" data-act="cam">Yeniden çek</button></div>';
+    return;
+  }
+  if (!app.cur) {
+    el.innerHTML =
+      '<div class="capture">' +
+      '<button class="btn primary" data-act="cam"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"><path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/></svg>Fotoğraf çek</button>' +
+      '<button class="btn" data-act="gal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="14" height="14" rx="1"/><path d="M7 3h14v14"/><path d="M3 15l4-4 4 4 3-3 3 3"/></svg>Galeriden seç</button>' +
+      '</div>' +
+      '<ul class="howto">' +
+      '<li>Kağıdı düz, iyi aydınlanmış bir yüzeye koyun ve telefonu tam üstünde tutun.</li>' +
+      '<li>Dört siyah kare görüntüye girsin; form ekranın çoğunu kaplasın.</li>' +
+      '<li>Çok sayıda kağıt için önce hepsini kamerayla çekin, sonra galeriden topluca seçin.</li>' +
+      '</ul>' +
+      '<label class="toggle"><input type="checkbox" data-act="auto"' + (app.autoSave ? ' checked' : '') + '> Sorunsuz okunan kağıtları beklemeden kaydet</label>' +
+      '<p class="muted small">' + app.results.length + ' kağıt kayıtlı. ' + (ex.keyA.some(k => !k) ? 'Cevap anahtarı henüz tamamlanmadı; puanlar anahtar girilince hesaplanır.' : '') + '</p>';
+    return;
+  }
+  const c = app.cur, rec = { digits: c.digits.map(d => d.v), bk: c.bk, ans: c.ans.join('') };
+  const g = grade(ex, rec);
+  const flags = { d: c.digits.map(d => d.flag), a: c.aFlag, b: c.bkFlag };
+  const issues = curIssues();
+  const dup = /^\d+$/.test(c.no) && app.results.find(r => r.no === c.no);
+  const flaggedQ = c.aFlag.map((f, i) => f ? i : -1).filter(i => i >= 0);
+  let h = '';
+  h += '<p class="queue">' + (qn ? 'Sırada ' + qn + ' kağıt daha var.' : 'Son kağıt.') + '</p>';
+  h += '<div class="paper"><div class="formview" style="aspect-ratio:' + (c.L.W + 12) + '/' + (c.L.H + 12) + '"><img src="' + c.img + '" alt="Okunan form">' +
+    overlay(ex, c.L, c.pts, rec, { interactive: true, flags, multi: c.multi }) + '</div></div>';
+  h += '<p class="hint">Yeşil doğru, kırmızı yanlış, kesik yeşil halka doğru cevap, mavi ise anahtar girilmeden okunan işaret. Bir yuvarlağa dokunarak değiştirebilirsiniz.</p>';
+  h += '<div class="idrow"><label for="noIn">Öğrenci numarası</label>' +
+    '<img class="hand" src="' + c.hand + '" alt="Öğrencinin kutulara yazdığı numara">' +
+    '<input id="noIn" class="noin' + (/^\d+$/.test(c.no) ? '' : ' bad') + '" inputmode="numeric" autocomplete="off" value="' + esc(c.no) + '" aria-describedby="noMsg">' +
+    '<div id="noMsg">' + (dup ? '<span class="warn">Bu numara zaten kayıtlı (' + (grade(ex, dup).U ? 'puansız' : fmt(grade(ex, dup).score, 2) + ' puan') + '). Kaydederseniz eski kayıt yenisiyle değişir.</span>' : '') + '</div></div>';
+  if (ex.booklets === 2) {
+    h += '<div class="row" style="margin:4px 0 10px"><b>Kitapçık</b><div class="seg" role="group" aria-label="Kitapçık">' +
+      ['A', 'B'].map(b => '<button data-act="bk" data-v="' + b + '" aria-pressed="' + (c.bk === b) + '">' + b + '</button>').join('') + '</div>' +
+      '<span class="small muted">' + (c.bk && !c.bkFlag ? 'formdan okundu' : 'seçin') + '</span></div>';
+  }
+  if (issues.length || flaggedQ.length) {
+    h += '<div class="flagbox"><h3>Kontrol edin</h3>';
+    issues.forEach(t => h += '<p class="small">' + esc(t) + '</p>');
+    flaggedQ.forEach(q => {
+      h += '<div class="flagq"><b>' + (q + 1) + '. soru</b> <span class="small">' + esc(c.aWhy[q]) + '</span>' +
+        '<img src="' + rowCrop(c, q) + '" alt="' + (q + 1) + '. sorunun yakın görüntüsü">' + bubbleRow('cur', q, c.ans[q], formKey(ex, g.bk)[q], g.marks[q], true) + '</div>';
+    });
+    h += '</div>';
+  }
+  h += '<div class="tally">' +
+    '<div><b>' + g.D + '</b><span>doğru</span></div><div><b>' + g.Y + '</b><span>yanlış</span></div><div><b>' + g.B + '</b><span>boş</span></div>' +
+    (g.U ? '<div><b>' + g.U + '</b><span>anahtarsız</span></div>' : '<div class="score"><b>' + fmt(g.score, 2) + '</b><span>puan</span></div>') + '</div>';
+  h += '<div class="actions"><button class="btn" data-act="discard">Kaydetme</button><button class="btn primary" data-act="save">Kaydet' + (qn ? ' ve sonraki' : '') + '</button></div>';
+  h += '<details class="all"><summary>Tüm cevapları listede düzenle</summary>' + answerList('cur', ex, c.ans, g) + '</details>';
+  el.innerHTML = h;
+}
+
+function bubbleRow(ctx, q, a, k, m, withNum) {
+  let s = '<div class="qrow">' + (withNum ? '' : '<span class="qn">' + (q + 1) + '</span>');
+  for (let i = 0; i < 5; i++) {
+    const L = LET[i], on = a === L, isKey = k && k !== 'X' && k.indexOf(L) >= 0;
+    const cls = 'bub' + (on ? ' on' + (m === 'c' ? ' c' : m === 'w' ? ' w' : '') : '') + (!on && isKey && m !== 'c' ? ' key' : '');
+    s += '<button class="' + cls + '" data-act="setans" data-ctx="' + ctx + '" data-q="' + q + '" data-v="' + L + '" aria-pressed="' + on + '" aria-label="' + (q + 1) + '. soru ' + L + '">' + L + '</button>';
+  }
+  s += '<button class="chip' + (a === '.' ? ' on' : '') + '" data-act="setans" data-ctx="' + ctx + '" data-q="' + q + '" data-v=".">Boş</button>';
+  if (a === '*') s += '<span class="small" style="color:var(--red)">çift işaret</span>';
+  s += '</div>';
+  return s;
+}
+function answerList(ctx, ex, ans, g) {
+  const key = formKey(ex, g.bk);
+  let s = '<div class="qlist">';
+  for (let q = 0; q < ex.nq; q++) s += bubbleRow(ctx, q, ans[q] || '.', key[q], g.marks[q], false);
+  return s + '</div>';
+}
+
+/* ---------------- çizim: Sonuçlar ---------------- */
+function analysis(ex, rs) {
+  const key = keyOf(ex), n = rs.length;
+  const sorted = rs.slice().sort((a, b) => b.g.net - a.g.net);
+  const k = Math.max(1, Math.round(n * 0.27));
+  const up = sorted.slice(0, k), lo = sorted.slice(-k);
+  const qs = [];
+  for (let q = 0; q < ex.nq; q++) {
+    const cnt = { A: 0, B: 0, C: 0, D: 0, E: 0, '.': 0, '*': 0 };
+    let c = 0;
+    for (const x of rs) { const a = (x.g.ansA || '')[q] || '.'; cnt[a] = (cnt[a] || 0) + 1; if (x.g.marksA[q] === 'c') c++; }
+    const pc = arr => arr.length ? arr.filter(x => x.g.marksA[q] === 'c').length / arr.length : 0;
+    const kk = key[q] || '';
+    let wrongTop = null;
+    if (kk && kk !== 'X') for (const L2 of LET) if (kk.indexOf(L2) < 0 && cnt[L2] > 0 && (!wrongTop || cnt[L2] > cnt[wrongTop])) wrongTop = L2;
+    const unused = kk && kk !== 'X' && n >= 10 ? LET.split('').filter(L2 => kk.indexOf(L2) < 0 && !cnt[L2]) : [];
+    qs.push({ q, key: kk, cnt, n, p: n ? c / n : 0, pu: n >= 4 ? pc(up) : null, pl: n >= 4 ? pc(lo) : null,
+      disc: n >= 4 ? pc(up) - pc(lo) : null, blank: n ? cnt['.'] / n : 0, wrongTop, unused });
+  }
+  return qs;
+}
+function diffLabel(p) { return p >= 0.70 ? 'kolay' : p >= 0.30 ? 'orta' : 'zor'; }
+function discLabel(d) { return d == null ? '' : d >= 0.40 ? 'çok iyi' : d >= 0.30 ? 'iyi' : d >= 0.20 ? 'düzeltilmeli' : 'zayıf'; }
+function kr20(ex, rs) {
+  const items = []; for (let q = 0; q < ex.nq; q++) { const k = ex.keyA[q] || ''; if (k && k !== 'X') items.push(q); }
+  const n = rs.length, K = items.length;
+  if (K < 2 || n < 5) return null;
+  const tot = rs.map(x => items.filter(q => x.g.marksA[q] === 'c').length);
+  const m = tot.reduce((a, b) => a + b, 0) / n;
+  const v = tot.reduce((a, b) => a + (b - m) * (b - m), 0) / n;
+  if (v <= 0) return null;
+  let spq = 0; for (const q of items) { const p = rs.filter(x => x.g.marksA[q] === 'c').length / n; spq += p * (1 - p); }
+  return (K / (K - 1)) * (1 - spq / v);
+}
+function pct(x) { return '%' + Math.round(x * 100); }
+function renderQAnalysis(ex, rs) {
+  const qa = analysis(ex, rs), n = rs.length;
+  const scored = qa.filter(x => x.key && x.key !== 'X');
+  let h = '';
+  if (!scored.length) return '<p class="warn">Soru analizi için önce Sınav sekmesinden cevap anahtarını girin.</p>';
+  const avgP = scored.reduce((a, x) => a + x.p, 0) / scored.length;
+  const hard = scored.slice().sort((a, b) => a.p - b.p).slice(0, 3);
+  const weak = n >= 4 ? scored.filter(x => x.disc != null && x.disc < 0.20) : [];
+  const rel = kr20(ex, rs);
+  h += '<div class="qa-sum"><p>Ortalama doğru yapma oranı <b>' + pct(avgP) + '</b> (' + diffLabel(avgP) + ').' +
+    (rel != null ? ' KR-20 güvenirlik katsayısı <b>' + fmt(rel, 2) + '</b>' + (rel >= 0.70 ? ', yeterli.' : ', düşük; testin iç tutarlılığı zayıf olabilir.') : '') + '</p>' +
+    '<p>En zor sorular: ' + hard.map(x => '<b>' + (x.q + 1) + '.</b> (' + pct(x.p) + ')').join(', ') + '.</p>' +
+    (weak.length ? '<p class="warn">Ayırt ediciliği zayıf (0,20’nin altında): ' + weak.map(x => (x.q + 1) + '.').join(', ') + ' Bu soruları iyi ve zayıf öğrenciler benzer oranda yapmış; gözden geçirmek isteyebilirsiniz.</p>' : '') +
+    (n < 10 ? '<p class="small muted">Kağıt sayısı az (' + n + '); oranlar ve ayırt edicilik daha çok kağıt okundukça anlam kazanır.</p>' : '') + '</div>';
+  // sütun grafiği
+  const W = 340, Hh = 120, padL = 22, padB = 16, bw = (W - padL - 4) / ex.nq;
+  let svg = '<svg class="qa-chart" viewBox="0 0 ' + W + ' ' + (Hh + padB) + '" role="img" aria-label="Soruların doğru yapılma oranları">';
+  [[0.3, 'zor'], [0.7, 'kolay']].forEach(([v, t]) => { const y = Hh - v * (Hh - 6); svg += '<line class="g" x1="' + padL + '" x2="' + W + '" y1="' + y + '" y2="' + y + '"/><text x="0" y="' + (y + 3) + '">' + Math.round(v * 100) + '</text>'; });
+  qa.forEach(x => {
+    const hh = Math.max(1.5, x.p * (Hh - 6)), xx = padL + x.q * bw + 1;
+    const col = !x.key || x.key === 'X' ? 'var(--line)' : x.p >= 0.70 ? 'var(--green)' : x.p >= 0.30 ? 'color-mix(in srgb, var(--green) 55%, var(--flag))' : 'var(--red)';
+    svg += '<rect class="bar" data-act="qinfo" data-q="' + x.q + '" x="' + xx.toFixed(1) + '" y="' + (Hh - hh).toFixed(1) + '" width="' + Math.max(2, bw - 2).toFixed(1) + '" height="' + hh.toFixed(1) + '" rx="1.5" fill="' + col + '"><title>' + (x.q + 1) + '. soru: ' + pct(x.p) + '</title></rect>';
+    if (ex.nq <= 12 || x.q === 0 || (x.q + 1) % 5 === 0) svg += '<text x="' + (xx + bw / 2 - 3).toFixed(1) + '" y="' + (Hh + 12) + '">' + (x.q + 1) + '</text>';
+  });
+  h += svg + '</svg>';
+  h += '<div class="tools"><div class="seg" role="group" aria-label="Soru sıralaması">' +
+    '<button data-act="qsort" data-v="no" aria-pressed="' + (app.qsort !== 'p') + '">Soru sırası</button>' +
+    '<button data-act="qsort" data-v="p" aria-pressed="' + (app.qsort === 'p') + '">En zordan</button></div></div>';
+  const list = qa.slice();
+  if (app.qsort === 'p') list.sort((a, b) => (a.key && a.key !== 'X' ? a.p : 2) - (b.key && b.key !== 'X' ? b.p : 2));
+  h += '<div class="qa-list">';
+  list.forEach(x => {
+    const scoredQ = x.key && x.key !== 'X';
+    const col = !scoredQ ? 'var(--line)' : x.p >= 0.70 ? 'var(--green)' : x.p >= 0.30 ? 'color-mix(in srgb, var(--green) 55%, var(--flag))' : 'var(--red)';
+    let meta = '';
+    if (x.key === 'X') meta = 'İptal edildi; herkese doğru sayılıyor.';
+    else if (!x.key) meta = 'Anahtar girilmedi.';
+    else {
+      meta = '<span class="tag ' + (x.p >= 0.70 ? 'ok' : x.p >= 0.30 ? 'mid' : 'bad') + '">' + diffLabel(x.p) + '</span>' +
+        (x.disc != null ? '<span class="tag ' + (x.disc >= 0.30 ? 'ok' : x.disc >= 0.20 ? 'mid' : 'bad') + '">ayırt edicilik ' + fmt(x.disc, 2) + '</span>' : '') +
+        'Doğru cevap ' + x.key + '.' + (x.wrongTop ? ' En çok seçilen yanlış ' + x.wrongTop + ' (' + pct(x.cnt[x.wrongTop] / n) + ').' : '') +
+        (x.blank ? ' Boş ' + pct(x.blank) + '.' : '') + (x.unused.length ? ' Hiç seçilmeyen: ' + x.unused.join(', ') + '.' : '');
+    }
+    h += '<button class="qa-row" data-act="qinfo" data-q="' + x.q + '"><span class="qa-n">' + (x.q + 1) + '.</span><span class="qa-bar"><i style="width:' + Math.round(x.p * 100) + '%;background:' + col + '"></i></span><span class="qa-p">' + pct(x.p) + '</span><span class="qa-meta">' + meta + '</span></button>';
+  });
+  h += '</div><p class="small muted" style="margin-top:10px">Güçlük: %70 ve üstü kolay, %30–70 orta, %30’un altı zor. Ayırt edicilik, en başarılı %27 ile en başarısız %27’nin doğru yapma oranları farkıdır; 0,40 ve üstü çok iyi, 0,30–0,39 iyi, 0,20–0,29 düzeltilmeli, 0,20’nin altı zayıf sayılır.</p>';
+  return h;
+}
+function renderResults() {
+  const el = $('#tab-results'), ex = app.exam;
+  if (!ex) { el.innerHTML = noExamBlock(); return; }
+  const all = app.results.map(r => ({ r, g: grade(ex, r) }));
+  if (!all.length) {
+    el.innerHTML = '<p class="empty">Henüz kayıtlı kağıt yok.<br>Tara sekmesinden ilk kağıdı okutun.</p>';
+    return;
+  }
+  const rs = all;
+  const scores = all.map(x => x.g.score).sort((a, b) => a - b);
+  const mean = scores.reduce((a, b) => a + b, 0) / scores.length;
+  const med = scores.length % 2 ? scores[(scores.length - 1) / 2] : (scores[scores.length / 2 - 1] + scores[scores.length / 2]) / 2;
+  const keyMissing = ex.keyA.some(k => !k);
+  let h = '<div class="stats"><div><b>' + all.length + '</b><span>kağıt</span></div><div><b>' + fmt(mean) + '</b><span>ortalama</span></div>' +
+    '<div><b>' + fmt(med) + '</b><span>medyan</span></div><div><b>' + fmt(scores[scores.length - 1]) + ' / ' + fmt(scores[0]) + '</b><span>en yüksek / düşük</span></div></div>';
+  if (keyMissing) h += '<p class="warn">Cevap anahtarı eksik; taralı kutular puana katılmadı. Sınav sekmesinden tamamlayın.</p>';
+  h += '<div class="tools"><div class="seg" role="group" aria-label="Görünüm">' +
+    '<button data-act="rview" data-v="st" aria-pressed="' + (app.rview !== 'qa') + '">Öğrenciler</button>' +
+    '<button data-act="rview" data-v="qa" aria-pressed="' + (app.rview === 'qa') + '">Sorular</button></div>' +
+    '<span class="grow"></span><button class="btn" data-act="export">Excel’e aktar</button></div>';
+  if (app.rview === 'qa') { el.innerHTML = h + renderQAnalysis(ex, rs); return; }
+  h += '<div class="tools"><div class="seg" role="group" aria-label="Sıralama">' +
+    '<button data-act="sort" data-v="no" aria-pressed="' + (app.sort === 'no') + '">Numaraya göre</button>' +
+    '<button data-act="sort" data-v="score" aria-pressed="' + (app.sort === 'score') + '">Puana göre</button></div></div>';
+  const qa = analysis(ex, rs);
+  const cols = 'grid-template-columns:repeat(' + ex.nq + ',minmax(0,1fr))';
+  h += '<div class="matrix"><div class="mrow head"><span>Numara</span><span class="sc">Puan</span><div class="strip headstrip" style="' + cols + '">';
+  qa.forEach(x => {
+    const bg = x.key ? 'color-mix(in srgb, var(--green) ' + Math.round(15 + x.p * 70) + '%, var(--paper))' : 'var(--soft)';
+    const lab = ex.nq <= 12 || x.q === 0 || (x.q + 1) % 5 === 0;
+    h += '<button' + (lab ? ' class="lab"' : '') + ' data-act="qinfo" data-q="' + x.q + '" style="background:' + bg + '" aria-label="' + (x.q + 1) + '. soru, yüzde ' + Math.round(x.p * 100) + ' doğru">' + (lab ? x.q + 1 : '') + '</button>';
+  });
+  h += '</div></div>';
+  const list = rs.slice().sort(app.sort === 'score' ? (a, b) => b.g.score - a.g.score || a.r.no.localeCompare(b.r.no) : (a, b) => a.r.no.localeCompare(b.r.no, 'tr', { numeric: true }));
+  list.forEach(x => {
+    h += '<button class="mrow" data-act="student" data-no="' + esc(x.r.no) + '"><span class="no">' + esc(x.r.no) + (ex.booklets === 2 ? ' <span class="muted small">' + x.g.bk + '</span>' : '') + '</span>' +
+      '<span class="sc">' + (x.g.U ? '–' : fmt(x.g.score)) + '</span><div class="strip" style="' + cols + '">' + x.g.marksA.map(m => '<i class="' + m + '"></i>').join('') + '</div></button>';
+  });
+  h += '</div><p class="small muted" style="margin-top:10px">Üst satırdaki yeşilin koyuluğu sorunun doğru yapılma oranını gösterir. Soruların ayrıntılı analizi için yukarıdan “Sorular”a geçin.</p>';
+  el.innerHTML = h;
+}
+
+/* ---------------- çizim: Anahtar ---------------- */
+const PEN = [[0, 'Yanlışlar doğruyu götürmesin'], [0.25, '4 yanlış 1 doğruyu götürsün'], [1 / 3, '3 yanlış 1 doğruyu götürsün']];
+/* ---------------- çizim: Sınav (tasarım) ---------------- */
+const ICON_UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 15l6-6 6 6"/></svg>';
+const ICON_DN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>';
+function keyBubbles(i, k, act) {
+  let h = '<div class="kb" role="group" aria-label="' + (i + 1) + '. sorunun doğru cevabı">';
+  for (const L2 of LET) h += '<button class="kbub' + (k !== 'X' && k.indexOf(L2) >= 0 ? ' on' : '') + '" data-act="' + act + '" data-q="' + i + '" data-v="' + L2 + '" aria-pressed="' + (k !== 'X' && k.indexOf(L2) >= 0) + '" aria-label="' + (i + 1) + '. soru, doğru cevap ' + L2 + '">' + L2 + '</button>';
+  h += '<button class="chip sm' + (k === 'X' ? ' on' : '') + '" data-act="' + act + '" data-q="' + i + '" data-v="X" aria-pressed="' + (k === 'X') + '">İptal</button></div>';
+  return h;
+}
+function qCard(q, i, ex) {
+  const k = q.k || '';
+  const errs = Studio.errorsIn([q.s].concat(q.c));
+  let h = '<div class="qcard">';
+  if (q.br && i) h += '<div class="brmark">Bu soru A kitapçığında yeni sayfada başlıyor</div>';
+  const bpos = ex.booklets === 2 && i < ex.nq ? bookletMap(ex).perm.indexOf(i) : -1;
+  h += '<div class="qtop"><b class="qnum">' + (i + 1) + ')</b><div class="qstem">' + (q.s.trim() ? Studio.richHTML(q.s) : '<span class="muted">Soru metni boş</span>') + '</div>' +
+    (bpos >= 0 ? '<span class="bpos" title="B kitapçığındaki sırası">B’de ' + (bpos + 1) + '</span>' : '') + '</div>';
+  h += '<div class="qchs">' + q.c.map((c, j) => '<span class="qch' + (k !== 'X' && k.indexOf(LET[j]) >= 0 ? ' ok' : '') + '"><b>' + LET[j] + ')</b> ' + Studio.richHTML(c) + '</span>').join('') + '</div>';
+  if (errs.length) h += '<p class="err">TeX hatası: ' + esc(errs[0]) + '</p>';
+  h += '<div class="qbar">' + keyBubbles(i, k, 'key') + '<span class="grow"></span>' +
+    '<button class="icon" data-act="qup" data-q="' + i + '" aria-label="' + (i + 1) + '. soruyu yukarı taşı"' + (i === 0 ? ' disabled' : '') + '>' + ICON_UP + '</button>' +
+    '<button class="icon" data-act="qdown" data-q="' + i + '" aria-label="' + (i + 1) + '. soruyu aşağı taşı"' + (i === ex.questions.length - 1 ? ' disabled' : '') + '>' + ICON_DN + '</button>' +
+    '<button class="btn sm" data-act="qedit" data-q="' + i + '">Düzenle</button></div>';
+  return h + '</div>';
+}
+function keyGridLegacy(ex) {
+  let h = '<div class="field"><label for="exNq">Soru sayısı</label><select id="exNq">' + opts(5, 30, ex.nq) + '</select></div><div class="qlist">';
+  for (let q = 0; q < ex.nq; q++) h += '<div class="qrow"><span class="qn">' + (q + 1) + '</span>' + keyBubbles(q, ex.keyA[q] || '', 'key') + '</div>';
+  return h + '</div>';
+}
+function renderDesign() {
+  const el = $('#tab-design'), ex = app.exam;
+  if (!el) return;
+  if (!ex) { el.innerHTML = noExamBlock(); return; }
+  const hasQ = ex.questions.length > 0;
+  const L = OMR.layout(ex.nd, ex.nq, ex.booklets === 2);
+  let h = '<h2>Sınav bilgileri</h2>' +
+    '<div class="field"><label for="exTitle">Başlık</label><input id="exTitle" value="' + esc(ex.title) + '" placeholder="Örnek: Diferansiyel Denklemler Final Sınavı"></div>' +
+    '<div class="grid2"><div class="field"><label for="exDate">Tarih</label><input id="exDate" value="' + esc(ex.date) + '" placeholder="12.01.2027"></div>' +
+    '<div class="field"><label for="exDur">Süre</label><input id="exDur" value="' + esc(ex.dur) + '" placeholder="75 dk"></div></div>' +
+    '<div class="field"><label for="exNote">Formun altındaki not</label><textarea id="exNote" rows="2" style="min-height:64px">' + esc(ex.note) + '</textarea></div>' +
+    '<div class="grid2"><div class="field"><label for="exNd">Numara hanesi</label><select id="exNd">' + opts(4, 12, ex.nd) + '</select></div>' +
+    '<div class="field"><label for="exPen">Puanlama</label><select id="exPen">' +
+    PEN.map(p => '<option value="' + p[0] + '"' + (Math.abs(ex.penalty - p[0]) < 1e-6 ? ' selected' : '') + '>' + p[1] + '</option>').join('') + '</select></div></div>' +
+    (L.W > 188 ? '<p class="err">Bu soru ve hane sayısıyla optik form A4 sayfaya sığmaz; hane sayısını azaltın.</p>' : '') +
+    '<p class="small muted">Her soru ' + fmt(100 / ex.nq, 2) + ' puan; toplam 100. Optik formdaki soru sayısı sorulardan kendiliğinden çıkar.</p>';
+  if (hasQ) {
+    h += '<div class="field"><label>Kitapçık</label><div class="seg" role="group" aria-label="Kitapçık">' +
+      '<button data-act="booklets" data-v="1" aria-pressed="' + (ex.booklets === 1) + '">Tek kitapçık</button>' +
+      '<button data-act="booklets" data-v="2" aria-pressed="' + (ex.booklets === 2) + '">A ve B</button></div></div>';
+    if (ex.booklets === 2) {
+      const bm = bookletMap(ex);
+      h += '<label class="toggle"><input type="checkbox" id="exBch"' + (ex.bch ? ' checked' : '') + '> Şıkların sırasını da karıştır</label>' +
+        '<p class="small muted">B kitapçığında sorular karışık sırada basılır ve B anahtarı kendiliğinden hesaplanır. Kitapçık harfi formun üzerinde dolu basılı gelir; öğrencinin kodlaması gerekmez. Sonuçlar ve madde analizi A sırasına çevrilerek birlikte gösterilir.</p>' +
+        '<p class="small">B’deki sıra (A’daki numaralarla): ' + bm.perm.map(x => x + 1).join(', ') + '</p>' +
+        '<button class="btn sm" data-act="reshuffle">Yeniden karıştır</button>';
+    }
+  }
+  h += '<div class="sechead"><h2>Sorular</h2><span class="muted small">' + (hasQ ? ex.questions.length + ' soru' : '') + '</span></div>';
+  if (hasQ) {
+    h += '<div id="qcards">' + ex.questions.map((q, i) => qCard(q, i, ex)).join('') + '</div>';
+    if (ex.questions.length > 30) h += '<p class="err">Optik formda en çok 30 soru var; ' + (ex.questions.length - 30) + ' soru forma girmez.</p>';
+    h += '<div class="row"><button class="btn primary" data-act="qadd">Soru ekle</button><button class="btn" data-act="import">.tex dosyasından içe aktar</button></div>';
+  } else if (ex.keyOnly) {
+    h += '<p class="small muted">Soru kağıdı başka yerde hazırlanıyor; burada yalnızca anahtar tutuluyor.</p>' + keyGridLegacy(ex) +
+      '<div class="row"><button class="btn" data-act="qadd">Soruları burada yaz</button><button class="btn" data-act="import">.tex dosyasından içe aktar</button></div>';
+  } else {
+    h += '<div class="emptybox"><p>Soruları buraya yazın ya da arasınavdaki gibi hazır bir LaTeX dosyasından alın. Optik form ve cevap anahtarı sorulardan kendiliğinden oluşur.</p>' +
+      '<div class="row"><button class="btn primary" data-act="qadd">Soru ekle</button><button class="btn" data-act="import">.tex dosyasından içe aktar</button></div>' +
+      '<button class="btn ghost" data-act="keyonly">Soru kağıdını başka yerde hazırladım, yalnızca anahtar gireceğim</button></div>';
+  }
+  if (hasQ || ex.keyOnly) {
+    const key = ex.keyA;
+    h += '<h2>Cevap anahtarı</h2><div class="field"><label for="keyText">Hızlı giriş: cevapları sırayla yazın</label>' +
+      '<div class="row"><input id="keyText" class="grow" autocapitalize="characters" autocomplete="off" placeholder="Örnek: CBDDEBCEAB…" value="' + esc(key.map(k => k.length === 1 ? k : '?').join('').replace(/\?+$/, '')) + '"><button class="btn" data-act="keytext">Uygula</button></div>' +
+      '<span class="small muted">' + key.filter(Boolean).length + ' / ' + ex.nq + ' soru cevaplı. Birden fazla şık seçilirse hepsi doğru sayılır; iptal edilen soru herkese doğru sayılır.</span></div>';
+  }
+  if (hasQ) {
+    if (ex.booklets === 2) h += '<h2>Çıktı</h2><div class="row outbtns"><button class="btn primary" data-act="out" data-v="pdf" data-b="A">A kitapçığı PDF</button><button class="btn primary" data-act="out" data-v="pdf" data-b="B">B kitapçığı PDF</button></div>' +
+      '<div class="row outbtns"><button class="btn" data-act="out" data-v="preview" data-b="A">A’yı önizle</button><button class="btn" data-act="out" data-v="preview" data-b="B">B’yi önizle</button><button class="btn" data-act="out" data-v="tex">LaTeX (.zip)</button></div>' +
+      '<p id="outMsg" class="small muted" role="status"></p><div id="pv" class="pv"></div>';
+    else h += '<h2>Çıktı</h2><div class="row outbtns"><button class="btn primary" data-act="out" data-v="pdf">PDF’i indir</button>' +
+      '<button class="btn" data-act="out" data-v="preview">Sayfaları önizle</button><button class="btn" data-act="out" data-v="tex">LaTeX dosyası (.zip)</button></div>' +
+      '<p id="outMsg" class="small muted" role="status"></p><div id="pv" class="pv"></div>';
+  }
+  h += '<h2>Sınavı sil</h2><p class="small muted">Sınav, soruları ve okunan bütün kağıtlar silinir.</p>' +
+    '<button class="btn danger" data-act="delexam">' + (app.delArm ? 'Eminim, ' + app.results.length + ' kağıtla birlikte sil' : 'Sınavı sil') + '</button>';
+  el.innerHTML = h;
+  if (hasQ) hydrateCards(ex);
+}
+let hydrateSig = '';
+async function hydrateCards(ex) {
+  const strings = [].concat(...ex.questions.map(q => [q.s].concat(q.c)));
+  const sig = strings.join('\u0001');
+  const firstTime = !Studio.ready();
+  try { await Studio.prepare(strings); }
+  catch (e) { const m = $('#outMsg'); if (m) m.textContent = 'Matematik dizgisi yüklenemedi; bağlantınızı kontrol edip sayfayı yeniden açın.'; return; }
+  if (app.exam !== ex) return;
+  if (!firstTime && sig === hydrateSig) return;
+  hydrateSig = sig;
+  const box = $('#qcards');
+  if (box) box.innerHTML = ex.questions.map((q, i) => qCard(q, i, ex)).join('');
+}
+
+/* ---------------- soru düzenleyici ---------------- */
+function openQEdit(i) {
+  const ex = app.exam;
+  const q = i >= 0 ? ex.questions[i] : normQ({});
+  app.qedit = { i, s: q.s, c: q.c.slice(), k: q.k, lay: q.lay, br: q.br, del: false };
+  const n = i >= 0 ? i + 1 : ex.questions.length + 1;
+  const e = app.qedit;
+  let h = sheetHead(i >= 0 ? n + '. soruyu düzenle' : 'Yeni soru (' + n + '.)');
+  h += '<div class="field"><label for="qS">Soru metni</label><textarea id="qS" rows="5" spellcheck="false">' + esc(e.s) + '</textarea>' +
+    '<span class="small muted">Matematiği $...$ arasına, ayrı satırdaki formülü $$...$$ arasına yazın. Enter yeni satır açar; \\textbf{...} kalın yazar.</span></div>';
+  h += '<div class="field"><label for="qC0">Şıklar</label>' + e.c.map((c, j) => '<div class="chrow"><span>' + LET[j] + ')</span><input id="qC' + j + '" value="' + esc(c) + '" spellcheck="false" autocomplete="off" aria-label="' + LET[j] + ' şıkkı"></div>').join('') + '</div>';
+  h += '<div class="field"><label>Doğru cevap</label>' + keyBubbles(n - 1, e.k, 'qek') + '</div>';
+  h += '<div class="field"><label>Şıkların dizilişi</label><div class="seg" role="group" aria-label="Şıkların dizilişi">' +
+    [['auto', 'Otomatik'], ['row', 'Yan yana'], ['col', 'Alt alta']].map(x => '<button data-act="qelay" data-v="' + x[0] + '" aria-pressed="' + (e.lay === x[0]) + '">' + x[1] + '</button>').join('') + '</div></div>';
+  h += '<label class="toggle"><input type="checkbox" id="qBr"' + (e.br ? ' checked' : '') + '> Bu soru yeni sayfada başlasın</label>';
+  h += '<h3 class="pvh">Önizleme</h3><div id="qPrev" class="qprev"><span class="muted small">Hazırlanıyor…</span></div><p id="qMode" class="small muted"></p>';
+  h += '<div class="actions">' + (i >= 0 ? '<button class="btn danger" data-act="qdel">Soruyu sil</button>' : '') +
+    '<button class="btn primary" data-act="qsave">' + (i >= 0 ? 'Değişiklikleri kaydet' : 'Soruyu ekle') + '</button></div>';
+  openSheet('qedit', h);
+  updateQPrev(true);
+}
+let qpT = null;
+function updateQPrev(now) {
+  clearTimeout(qpT);
+  qpT = setTimeout(async () => {
+    const e = app.qedit, box = $('#qPrev');
+    if (!e || !box) return;
+    try { await Studio.prepare([e.s].concat(e.c)); }
+    catch (er) { box.innerHTML = '<p class="err">Matematik dizgisi yüklenemedi; bağlantınızı kontrol edin.</p>'; return; }
+    if (app.qedit !== e || !$('#qPrev')) return;
+    const n = e.i >= 0 ? e.i + 1 : app.exam.questions.length + 1;
+    const errs = Studio.errorsIn([e.s].concat(e.c));
+    $('#qPrev').innerHTML = '<div class="qtop"><b class="qnum">' + n + ')</b><div class="qstem">' + (e.s.trim() ? Studio.richHTML(e.s) : '<span class="muted">Soru metni boş</span>') + '</div></div>' +
+      '<div class="qchs">' + e.c.map((c, j) => '<span class="qch' + (e.k !== 'X' && e.k.indexOf(LET[j]) >= 0 ? ' ok' : '') + '"><b>' + LET[j] + ')</b> ' + Studio.richHTML(c) + '</span>').join('') + '</div>' +
+      (errs.length ? '<p class="err">TeX hatası: ' + esc(errs[0]) + '</p>' : '');
+    const mode = Studio.questionMode(normQ(e));
+    $('#qMode').textContent = mode === 'row' ? 'Baskıda şıklar yan yana dizilecek.' : 'Baskıda şıklar alt alta dizilecek.';
+  }, now ? 0 : 280);
+}
+function refreshQEditKeys() {
+  const e = app.qedit;
+  document.querySelectorAll('#sheetBody [data-act="qek"]').forEach(b => {
+    const v = b.dataset.v, on = v === 'X' ? e.k === 'X' : (e.k !== 'X' && e.k.indexOf(v) >= 0);
+    b.classList.toggle('on', on); b.setAttribute('aria-pressed', on);
+  });
+  document.querySelectorAll('#sheetBody [data-act="qelay"]').forEach(b => b.setAttribute('aria-pressed', b.dataset.v === e.lay));
+}
+
+/* ---------------- .tex içe aktarma ---------------- */
+async function readTexFile(f) {
+  let txt = '';
+  try { txt = await f.text(); } catch (e) { toast('Dosya okunamadı.'); return; }
+  let r;
+  try { r = Studio.parseTex(txt); } catch (e) { toast('Dosya çözümlenemedi.'); return; }
+  if (!r.questions.length) { toast('Dosyada \\question ile başlayan soru bulunamadı.'); return; }
+  app.importData = r;
+  const ex = app.exam, has = ex.questions.length;
+  const withKey = r.questions.filter(q => q.k).length;
+  const hdrDefault = !has && (!ex.title.trim() || ex.title === 'Adsız sınav');
+  let h = sheetHead('İçe aktar');
+  h += '<p><b>' + r.questions.length + ' soru</b> bulundu' + (withKey ? '; ' + withKey + ' tanesinde doğru cevap işaretli' : '') + '.</p>';
+  h += '<ol class="small muted" style="padding-left:1.4em">' + r.questions.slice(0, 3).map(q => '<li>' + esc(q.s.slice(0, 90)) + (q.s.length > 90 ? '…' : '') + '</li>').join('') + (r.questions.length > 3 ? '<li style="list-style:none">…</li>' : '') + '</ol>';
+  if (r.title || r.date || r.dur) h += '<label class="toggle"><input type="checkbox" id="impHdr"' + (hdrDefault ? ' checked' : '') + '> Başlığı, tarihi ve süreyi de al: “' + esc([r.title, r.date, r.dur].filter(Boolean).join(', ')) + '”</label>';
+  h += '<div class="actions">' + (has ? '<button class="btn" data-act="impgo" data-v="append">Sonuna ekle</button><button class="btn primary" data-act="impgo" data-v="replace">Mevcut ' + has + ' sorunun yerine koy</button>'
+    : '<button class="btn primary" data-act="impgo" data-v="replace">İçe aktar</button>') + '</div>';
+  openSheet('import', h);
+}
+
+/* ---------------- çıktı ---------------- */
+function fileBase(ex) { return (ex.title || ex.name || 'sinav').replace(/[\\/:*?"<>|]+/g, '-').trim() || 'sinav'; }
+async function runOut(kind, bk) {
+  const ex = app.exam;
+  if (!ex || !ex.questions.length || app.outBusy) return;
+  app.outBusy = true;
+  const msg = t => { const m = $('#outMsg'); if (m) m.textContent = t; };
+  msg(kind === 'tex' ? 'LaTeX dosyası hazırlanıyor…' : 'Sayfalar diziliyor…');
+  try {
+    if (kind === 'tex') {
+      const list = ex.booklets === 2 ? [viewExam(ex, 'A'), viewExam(ex, 'B')] : [viewExam(ex, '')];
+      const blob = await Studio.texZip(list);
+      if (await saveFile(fileBase(ex) + ' LaTeX.zip', blob)) msg('Zip içinde ' + (ex.booklets === 2 ? 'sinav_A.tex, sinav_B.tex' : 'sinav.tex') + ' ve optik_form.tex var; aynı klasörde derleyin.'); else msg('');
+    } else {
+      const vx = viewExam(ex, bk || 'A');
+      const lay = await Studio.layoutExam(vx);
+      const info = (vx.bk ? vx.bk + ' kitapçığı: ' : '') + lay.pages.length + ' sayfa.' + (lay.warn.length ? ' ' + lay.warn.join(' ') : '');
+      if (kind === 'preview') {
+        const pv = $('#pv'); if (pv) pv.innerHTML = lay.pages.map(p => Studio.pageSVG(p)).join('');
+        msg(info);
+      } else {
+        msg('PDF hazırlanıyor…');
+        const blob = await Studio.toPDF(lay, ex.title + (vx.bk ? ' (' + vx.bk + ')' : ''));
+        await saveFile(fileBase(ex) + (vx.bk ? ' ' + vx.bk : '') + '.pdf', blob); msg(info);
+      }
+    }
+  } catch (e) {
+    msg('Hazırlanamadı (' + (e && e.message ? e.message : e) + '). Bağlantınızı kontrol edip tekrar deneyin.');
+  } finally { app.outBusy = false; }
+}
+
+/* ---------------- alt panel ---------------- */
+function openSheet(kind, html) {
+  app.sheetKind = kind;
+  $('#sheetBody').innerHTML = html; $('#sheet').hidden = false;
+  const b = $('#sheetBody [data-act="close"]'); if (b) b.focus();
+}
+function closeSheet() { $('#sheet').hidden = true; app.sheetKind = null; app.edit = null; app.qedit = null; app.importData = null; }
+function sheetHead(t) { return '<div class="sheet-head"><h2>' + t + '</h2><button class="btn ghost" data-act="close">Kapat</button></div>'; }
+
+function showExams() {
+  let h = sheetHead('Sınavlar') + '<ul class="exlist">';
+  app.exams.forEach(e => {
+    h += '<li><button data-act="pick" data-id="' + esc(e.id) + '" aria-current="' + (e.id === app.examId) + '"><span>' + esc(e.name) + '</span><span class="muted small">' + new Date(e.created).toLocaleDateString('tr-TR') + '</span></button></li>';
+  });
+  h += '</ul><h2>Yeni sınav</h2><div class="field"><label for="newName">Sınav başlığı</label><input id="newName" placeholder="Örnek: Diferansiyel Denklemler Bütünleme Sınavı"></div>' +
+    '<div class="field"><label for="newNd">Öğrenci numarası hane sayısı</label><select id="newNd">' + opts(4, 12, app.exam ? app.exam.nd : 6) + '</select></div>' +
+    '<div class="actions"><button class="btn primary" data-act="create">Sınavı oluştur</button></div>';
+  h += claudeExportBlock();
+  openSheet('exams', h);
+}
+function showStudent(no) {
+  const ex = app.exam, r = app.results.find(x => x.no === no);
+  if (!r) return;
+  if (!app.edit || app.edit.origNo !== no) app.edit = { origNo: no, no: r.no, bk: r.bk || '', ans: (r.ans || '').padEnd(ex.nq, '.').split('').slice(0, ex.nq), dirty: false };
+  const e = app.edit, rec = { bk: e.bk, ans: e.ans.join(''), digits: [] };
+  const g = grade(ex, rec), L = OMR.layout(ex.nd, ex.nq, ex.booklets === 2);
+  rec.digits = Array.from({ length: ex.nd }, (_, j) => /\d/.test(r.no[j] || '') ? +r.no[j] : -1);
+  const pts = { d: L.digits, a: L.answers, b: L.booklet };
+  let h = sheetHead(esc(r.no) + (g.U ? '' : ', ' + fmt(g.score, 2) + ' puan'));
+  if (r.img) h += '<div class="paper"><div class="formview" style="aspect-ratio:' + (L.W + 12) + '/' + (L.H + 12) + '"><img src="' + r.img + '" alt="Kayıtlı form görüntüsü">' + overlay(ex, L, pts, rec, {}) + '</div></div>';
+  h += '<p class="small muted">' + new Date(r.at).toLocaleString('tr-TR') + (r.edited ? ', elle düzeltildi' : '') + '</p>';
+  h += '<div class="tally"><div><b>' + g.D + '</b><span>doğru</span></div><div><b>' + g.Y + '</b><span>yanlış</span></div><div><b>' + g.B + '</b><span>boş</span></div>' + (g.U ? '' : '<div class="score"><b>' + fmt(g.score, 2) + '</b><span>puan</span></div>') + '</div>';
+  if (ex.booklets === 2) h += '<div class="row" style="margin:8px 0"><b>Kitapçık</b><div class="seg" role="group" aria-label="Kitapçık">' + ['A', 'B'].map(b => '<button data-act="ebk" data-v="' + b + '" aria-pressed="' + (e.bk === b) + '">' + b + '</button>').join('') + '</div></div>';
+  h += '<h2>Cevaplar' + (ex.booklets === 2 ? ' (' + (g.bk) + ' kitapçığındaki sırayla)' : '') + '</h2>' + answerList('edit', ex, e.ans, g);
+  h += '<div class="actions"><button class="btn danger" data-act="delres">' + (app.delArm ? 'Eminim, sil' : 'Kaydı sil') + '</button><button class="btn primary" data-act="saveedit"' + (e.dirty ? '' : ' disabled') + '>Değişiklikleri kaydet</button></div>';
+  openSheet('student', h);
+}
+function showQuestion(q) {
+  const ex = app.exam;
+  const rs = app.results.map(r => ({ r, g: grade(ex, r) }));
+  const x = analysis(ex, rs)[q], n = rs.length || 1;
+  const k = x.key, Q = ex.questions[q];
+  let h = sheetHead((q + 1) + '. soru');
+  if (Q) h += '<div class="qa-text" id="qaText">' + qaTextHTML(Q, k) + '</div>';
+  if (k === 'X') h += '<p>İptal edildi; herkese doğru sayılıyor.</p>';
+  else if (!k) h += '<p>Bu soru için anahtar girilmedi.</p>';
+  else {
+    h += '<p>Doğru cevap <b>' + k.split('').join(' ya da ') + '</b>. ' + rs.length + ' öğrencinin ' + rs.filter(y => y.g.marksA[q] === 'c').length + ' tanesi doğru yaptı: <b>' + pct(x.p) + '</b> (' + diffLabel(x.p) + ').</p>';
+    if (x.disc != null) h += '<p class="small muted">En başarılı %27’lik grupta doğru oranı ' + pct(x.pu) + ', en başarısız %27’lik grupta ' + pct(x.pl) + '. Ayırt edicilik ' + fmt(x.disc, 2) + ' (' + discLabel(x.disc) + ').' + (x.disc < 0.20 ? ' Soru iyi ve zayıf öğrencileri ayırmıyor; gözden geçirmek isteyebilirsiniz.' : '') + '</p>';
+  }
+  h += '<div class="dist">';
+  [...LET, '.', '*'].forEach(L2 => {
+    const c = x.cnt[L2] || 0; if (L2 === '*' && !c) return;
+    h += '<b>' + (L2 === '.' ? 'Boş' : L2 === '*' ? 'Çift' : L2) + '</b><div class="bar' + (k.indexOf(L2) >= 0 && L2 !== '.' && L2 !== '*' ? ' k' : '') + '" style="width:' + Math.max(2, c / n * 100) + '%"></div><span>' + c + ' (' + pct(c / n) + ')</span>';
+  });
+  h += '</div>';
+  if (x.unused.length) h += '<p class="small muted">Hiç seçilmeyen şık' + (x.unused.length > 1 ? 'lar' : '') + ': ' + x.unused.join(', ') + '. ' + (x.unused.length > 1 ? 'Bu çeldiriciler' : 'Bu çeldirici') + ' işe yaramamış olabilir.</p>';
+  if (k !== 'X') h += '<button class="btn" data-act="cancelq" data-q="' + q + '">Bu soruyu iptal et (herkese doğru say)</button>';
+  else h += '<button class="btn" data-act="uncancelq" data-q="' + q + '">İptali geri al</button>';
+  openSheet('question', h);
+  if (Q) Studio.prepare([Q.s].concat(Q.c)).then(() => { const t = $('#qaText'); if (t && app.sheetKind === 'question') t.innerHTML = qaTextHTML(Q, k); }).catch(() => {});
+}
+function qaTextHTML(Q, k) {
+  return '<div class="qstem">' + Studio.richHTML(Q.s) + '</div><div class="qchs" style="margin-left:0">' +
+    Q.c.map((c, j) => '<span class="qch' + (k && k !== 'X' && k.indexOf(LET[j]) >= 0 ? ' ok' : '') + '"><b>' + LET[j] + ')</b> ' + Studio.richHTML(c) + '</span>').join('') + '</div>';
+}
+
+/* ---------------- Excel ---------------- */
+function loadXLSX() {
+  return new Promise((res, rej) => {
+    if (window.XLSX) return res(window.XLSX);
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    s.onload = () => res(window.XLSX); s.onerror = () => rej(new Error('xlsx'));
+    document.head.appendChild(s);
+  });
+}
+async function exportXlsx() {
+  const ex = app.exam;
+  if (!app.downloads && !app.topLevel) { toast('Bu görünümde dosya indirme kullanılamıyor.'); return; }
+  let X;
+  try { X = await loadXLSX(); } catch (e) { toast('Excel kütüphanesi yüklenemedi; bağlantınızı kontrol edin.'); return; }
+  const rows = app.results.map(r => ({ r, g: grade(ex, r) })).sort((a, b) => a.r.no.localeCompare(b.r.no, 'tr', { numeric: true }));
+  const qh = Array.from({ length: ex.nq }, (_, i) => 'S' + (i + 1));
+  const twoB = ex.booklets === 2;
+  const head = ['Numara'].concat(twoB ? ['Kitapçık'] : [], ['Doğru', 'Yanlış', 'Boş', 'Net', 'Puan'], qh);
+  const aoa = [head];
+  rows.forEach(x => {
+    const ans = (x.g.ansA || '').padEnd(ex.nq, '.').split('').slice(0, ex.nq).map((a, i) => (a === '.' ? '' : a === '*' ? 'Çift' : a) + (x.g.marksA[i] === 'c' ? '' : x.g.marksA[i] === 'w' ? ' ✗' : ''));
+    aoa.push([x.r.no].concat(twoB ? [x.g.bk] : [], [x.g.D, x.g.Y, x.g.B, Math.round(x.g.net * 100) / 100, x.g.U ? '' : x.g.score], ans));
+  });
+  aoa.push(['Anahtar'].concat(twoB ? ['A'] : [], ['', '', '', '', ''], keyOf(ex).map(k => k === 'X' ? 'İptal' : k)));
+  if (twoB) aoa.push(['Cevaplar ve anahtar A kitapçığının soru ve şık sırasına çevrilmiştir.']);
+  const wb = X.utils.book_new();
+  const ws = X.utils.aoa_to_sheet(aoa);
+  ws['!cols'] = head.map((_, i) => ({ wch: i === 0 ? 14 : i < head.length - ex.nq ? 8 : 5 }));
+  X.utils.book_append_sheet(wb, ws, 'Sonuçlar');
+  {
+    const qa = analysis(ex, rows);
+    const a2 = [['Soru', 'Anahtar', 'Doğru oranı (%)', 'Güçlük', 'Üst grup (%)', 'Alt grup (%)', 'Ayırt edicilik', 'Yorum', 'A', 'B', 'C', 'D', 'E', 'Boş', 'Çift']];
+    qa.forEach(x => {
+      const sc = x.key && x.key !== 'X';
+      a2.push([x.q + 1, x.key === 'X' ? 'İptal' : x.key, Math.round(x.p * 1000) / 10, sc ? diffLabel(x.p) : '',
+        x.pu == null ? '' : Math.round(x.pu * 1000) / 10, x.pl == null ? '' : Math.round(x.pl * 1000) / 10,
+        x.disc == null ? '' : Math.round(x.disc * 100) / 100, sc ? discLabel(x.disc) : '',
+        x.cnt.A, x.cnt.B, x.cnt.C, x.cnt.D, x.cnt.E, x.cnt['.'], x.cnt['*']]);
+    });
+    const rel = kr20(ex, rows);
+    a2.push([]); a2.push(['Kağıt sayısı', rows.length]);
+    if (rel != null) a2.push(['KR-20 güvenirlik', Math.round(rel * 1000) / 1000]);
+    X.utils.book_append_sheet(wb, X.utils.aoa_to_sheet(a2), 'Madde analizi');
+  }
+  const buf = X.write(wb, { bookType: 'xlsx', type: 'array' });
+  const name = (ex.name || 'sinav').replace(/[\\/:*?"<>|]+/g, '-').trim() + ' sonuçlar.xlsx';
+  const blob = new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+  await saveFile(name, blob);
+}
+/*CLAUDE-ONLY-START*/
+function claudeExportBlock() {
+  return '<h2>Telefon uygulamasına aktar</h2><p class="small muted">Sınavlarınızı ve okunan kağıtları tek bir yedek dosyası olarak indirir. Telefona kurduğunuz Sınav Stüdyosu’nda “Yedekten geri yükle” ile açabilirsiniz.</p>' +
+    '<button class="btn" data-act="cbackup">Yedeği indir</button>';
+}
+async function exportClaude() {
+  try {
+    const exams = app.exams.map(e => Object.assign({}, e, { kind: 'exam' }));
+    const results = [];
+    for (const e of exams) {
+      if (store.mode === 'db') {
+        const snap = await store.db.doc(store.base() + '/' + e.id).collection('results').get();
+        snap.docs.forEach(d => { const r = Object.assign({}, d.data()); results.push(Object.assign(r, { examId: e.id, no: r.no || d.id })); });
+      } else Object.values(store.mem.results[e.id] || {}).forEach(r => results.push(Object.assign({}, r, { examId: e.id })));
+    }
+    const data = { app: 'sinav-studyosu', format: 1, exportedAt: new Date().toISOString(), exams, results };
+    await saveFile('sinav-studyosu-yedek-' + new Date().toISOString().slice(0, 10) + '.json', new Blob([JSON.stringify(data)], { type: 'application/json' }));
+  } catch (e) { toast('Yedek hazırlanamadı (' + (e && (e.code || e.message) || e) + ').'); }
+}
+/*CLAUDE-ONLY-END*/
+async function saveFile(name, blob) {
+  if (app.downloads) {
+    try { await app.downloads.save({ filename: name, data: blob }); toast('Dosya kaydedildi.'); return true; }
+    catch (e) {
+      if (e && e.code === 'declined') return false;
+      if (e && e.code === 'rate_limited') { toast('Önceki indirme penceresi hâlâ açık.'); return false; }
+      toast('Dosya kaydedilemedi (' + (e && e.code || 'hata') + ').'); return false;
+    }
+  }
+  if (app.topLevel) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; a.click(); return true; }
+  toast('Bu görünümde dosya indirme kullanılamıyor.'); return false;
+}
+
+/* ---------------- olaylar ---------------- */
+function newId() { return 'ex' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+async function createExam() {
+  const name = ($('#newName') && $('#newName').value.trim()) || 'Adsız sınav';
+  const ex = normExam({ id: newId(), title: name, nd: +$('#newNd').value, penalty: 0, created: Date.now(), questions: [] });
+  app.examId = ex.id; ls.set('omr.exam', ex.id);
+  try { await store.saveExam(ex); closeSheet(); app.tab = 'design'; ls.set('omr.tab', 'design'); renderAll(); toast('Sınav oluşturuldu. Soruları ekleyin ya da .tex dosyasından alın.'); }
+  catch (e) { toast(dbErrMsg(e)); }
+}
+function setExamField(f, v) {
+  const ex = app.exam; if (!ex) return;
+  ex[f] = v;
+  syncDerived(ex);
+  scheduleExamSave();
+}
+function retimeAfterExamChange() { renderTop(); renderDesign(); renderResults(); }
+
+document.addEventListener('click', async ev => {
+  const t = ev.target.closest('[data-act]'); if (!t) return;
+  const act = t.dataset.act, ex = app.exam;
+  if (act !== 'delexam' && act !== 'delres' && app.delArm) { app.delArm = false; if (app.tab === 'design') renderDesign(); }
+  switch (act) {
+    case 'tab': app.tab = t.dataset.tab; ls.set('omr.tab', app.tab); renderTop(); if (app.tab === 'results') renderResults(); if (app.tab === 'design') renderDesign(); if (app.tab === 'scan') renderScan(); window.scrollTo({ top: 0 }); break;
+    case 'exams': showExams(); break;
+    case 'close': closeSheet(); break;
+    case 'pick': app.examId = t.dataset.id; ls.set('omr.exam', app.examId); app.queue = []; app.cur = null; app.errCard = null; app.qedit = null; closeSheet(); onExams(app.exams); break;
+    case 'create': createExam(); break;
+    case 'cam': $('#camIn').click(); break;
+    case 'gal': $('#galIn').click(); break;
+    case 'skip': nextInQueue(); break;
+    case 'discard': nextInQueue(); break;
+    case 'save': saveCurrent(false); break;
+    case 'auto': app.autoSave = t.checked; ls.set('omr.auto', t.checked ? '1' : '0'); break;
+    case 'ovtap': {
+      const c = app.cur; if (!c) break;
+      const k = t.dataset.k, gi = +t.dataset.g, i = +t.dataset.i;
+      c.edited = true;
+      if (k === 'a') { const L2 = LET[i]; c.ans[gi] = c.ans[gi] === L2 ? '.' : L2; c.aFlag[gi] = false; c.multi[gi] = null; }
+      else if (k === 'd') { c.digits[gi].v = c.digits[gi].v === i ? -1 : i; c.digits[gi].flag = false; c.no = numFromDigits(c.digits); }
+      renderScan(); break;
+    }
+    case 'setans': {
+      const q = +t.dataset.q, v = t.dataset.v;
+      if (t.dataset.ctx === 'cur') { const c = app.cur; c.ans[q] = v; c.aFlag[q] = false; c.multi[q] = null; c.edited = true; const open = $('details.all') && $('details.all').open; renderScan(); if (open) $('details.all').open = true; }
+      else if (app.edit) { app.edit.ans[q] = v; app.edit.dirty = true; const sc = $('#sheetBody').scrollTop; showStudent(app.edit.origNo); $('#sheetBody').scrollTop = sc; }
+      break;
+    }
+    case 'saveedit': {
+      const e = app.edit, r = app.results.find(x => x.no === e.origNo); if (!r) break;
+      const rec = Object.assign({}, r, { bk: ex.booklets === 2 ? e.bk : '', ans: e.ans.join(''), edited: true, at: Date.now() }); delete rec.id;
+      try { await store.saveResult(ex.id, rec); toast('Değişiklikler kaydedildi.'); closeSheet(); renderResults(); } catch (er) { toast(dbErrMsg(er)); }
+      break;
+    }
+    case 'delres': {
+      if (!app.delArm) { app.delArm = true; const sc = $('#sheetBody').scrollTop; showStudent(app.edit.origNo); $('#sheetBody').scrollTop = sc; break; }
+      app.delArm = false;
+      try { await store.deleteResult(ex.id, app.edit.origNo); toast('Kayıt silindi.'); closeSheet(); } catch (er) { toast(dbErrMsg(er)); }
+      break;
+    }
+    case 'student': app.edit = null; app.delArm = false; showStudent(t.dataset.no); break;
+    case 'qinfo': showQuestion(+t.dataset.q); break;
+    case 'cancelq': case 'uncancelq': {
+      const q = +t.dataset.q;
+      setKey(ex, q, act === 'cancelq' ? 'X' : ''); scheduleExamSave(); renderResults(); renderDesign(); showQuestion(q);
+      if (act === 'uncancelq') toast('İptal geri alındı; doğru cevabı Sınav sekmesinden yeniden seçin.');
+      break;
+    }
+    case 'sort': app.sort = t.dataset.v; renderResults(); break;
+    case 'rview': app.rview = t.dataset.v; ls.set('omr.rview', app.rview); renderResults(); break;
+    case 'qsort': app.qsort = t.dataset.v; renderResults(); break;
+    case 'export': exportXlsx(); break;
+    case 'key': {
+      const q = +t.dataset.q, v = t.dataset.v;
+      let k = ex.keyA[q] || '';
+      if (v === 'X') k = k === 'X' ? '' : 'X';
+      else { if (k === 'X') k = ''; k = k.indexOf(v) >= 0 ? k.replace(v, '') : (k + v).split('').sort().join(''); }
+      setKey(ex, q, k); scheduleExamSave(); renderDesign(); renderResults(); break;
+    }
+    case 'keytext': {
+      const s = ($('#keyText').value || '').toUpperCase().replace(/[^ABCDE?X*]/g, '');
+      for (let q = 0; q < Math.min(s.length, ex.nq); q++) { const ch = s[q]; if ('ABCDE'.indexOf(ch) >= 0) setKey(ex, q, ch); else if (ch === 'X' || ch === '*') setKey(ex, q, 'X'); }
+      scheduleExamSave(); renderDesign(); renderResults();
+      toast(Math.min(s.length, ex.nq) + ' sorunun cevabı girildi.');
+      break;
+    }
+    case 'qadd':
+      if (ex.booklets === 2 && app.results.length) { toast('Okunmuş kağıt varken kitapçıklı sınava soru eklenemez; B sırası bozulur.'); break; }
+      openQEdit(-1); break;
+    case 'qedit': openQEdit(+t.dataset.q); break;
+    case 'qup': case 'qdown': {
+      if (app.results.length) { toast('Bu sınav için okunmuş kağıt var; soruların sırasını değiştirmek puanları bozar.'); break; }
+      const i = +t.dataset.q, j = act === 'qup' ? i - 1 : i + 1, Q = ex.questions;
+      if (j < 0 || j >= Q.length) break;
+      [Q[i], Q[j]] = [Q[j], Q[i]];
+      syncDerived(ex); scheduleExamSave(); renderDesign(); renderResults(); break;
+    }
+    case 'qek': {
+      const e = app.qedit; if (!e) break;
+      const v = t.dataset.v; let k = e.k || '';
+      if (v === 'X') k = k === 'X' ? '' : 'X';
+      else { if (k === 'X') k = ''; k = k.indexOf(v) >= 0 ? k.replace(v, '') : (k + v).split('').sort().join(''); }
+      e.k = k; refreshQEditKeys(); updateQPrev(true); break;
+    }
+    case 'qelay': if (app.qedit) { app.qedit.lay = t.dataset.v; refreshQEditKeys(); updateQPrev(true); } break;
+    case 'qsave': {
+      const e = app.qedit; if (!e) break;
+      if (!e.s.trim()) { toast('Soru metni boş.'); break; }
+      const q = normQ({ s: e.s.replace(/\s+$/, ''), c: e.c.map(c => c.trim()), k: e.k, lay: e.lay, br: e.br });
+      if (e.i >= 0) ex.questions[e.i] = q; else ex.questions.push(q);
+      syncDerived(ex); scheduleExamSave(); app.qedit = null; closeSheet(); renderDesign(); renderResults();
+      toast(e.i >= 0 ? (e.i + 1) + '. soru kaydedildi.' : ex.questions.length + '. soru eklendi.');
+      if (e.i < 0 && app.results.length) toast('Soru eklendi; daha önce okunan kağıtlarda bu soru boş sayılır.');
+      break;
+    }
+    case 'qdel': {
+      const e = app.qedit; if (!e || e.i < 0) break;
+      if (app.results.length) { toast('Bu sınav için okunmuş kağıt var; soru silmek puanları bozar.'); break; }
+      if (!e.del) { e.del = true; t.textContent = 'Eminim, sil'; break; }
+      ex.questions.splice(e.i, 1);
+      syncDerived(ex); scheduleExamSave(); app.qedit = null; closeSheet(); renderDesign(); renderResults(); toast('Soru silindi.');
+      break;
+    }
+    case 'keyonly': ex.keyOnly = true; syncDerived(ex); scheduleExamSave(); renderDesign(); break;
+    case 'import': $('#texIn').click(); break;
+    case 'impgo': {
+      const r = app.importData; if (!r) break;
+      const mode = t.dataset.v;
+      if (ex.booklets === 2 && app.results.length) { toast('Okunmuş kağıt varken kitapçıklı sınavın soruları değiştirilemez.'); break; }
+      if (mode === 'replace' && ex.questions.length && app.results.length) { toast('Bu sınav için okunmuş kağıt var; soruları değiştirmek yerine yeni bir sınav oluşturun.'); break; }
+      const qs = r.questions.map(normQ);
+      ex.questions = mode === 'append' ? ex.questions.concat(qs) : qs;
+      const hdr = $('#impHdr');
+      if (hdr && hdr.checked) { if (r.title) ex.title = r.title; if (r.date) ex.date = r.date; if (r.dur) ex.dur = r.dur; }
+      ex.keyOnly = false;
+      syncDerived(ex); scheduleExamSave(); app.importData = null; closeSheet(); renderTop(); renderDesign(); renderResults();
+      toast(qs.length + ' soru içe aktarıldı.');
+      break;
+    }
+    case 'out': runOut(t.dataset.v, t.dataset.b || ''); break;
+    case 'cbackup': if (typeof exportClaude === 'function') exportClaude(); break;
+    case 'booklets': {
+      const v = +t.dataset.v; if (v === ex.booklets) break;
+      if (app.results.length) { toast('Bu sınav için okunmuş kağıt var; kitapçık ayarı değiştirilemez.'); break; }
+      ex.booklets = v; if (v === 2 && !ex.bseed) ex.bseed = newSeed();
+      scheduleExamSave(); renderDesign(); renderResults();
+      toast(v === 2 ? 'A ve B kitapçıkları açıldı; iki kitapçığın PDF’ini ayrı ayrı indirin.' : 'Tek kitapçığa dönüldü.');
+      break;
+    }
+    case 'reshuffle':
+      if (app.results.length) { toast('Bu sınav için okunmuş kağıt var; B kitapçığı yeniden karıştırılamaz.'); break; }
+      ex.bseed = newSeed(); scheduleExamSave(); renderDesign(); toast('B kitapçığı yeniden karıştırıldı; B PDF’ini yeniden indirin.'); break;
+    case 'bk': if (app.cur) { app.cur.bk = t.dataset.v; app.cur.bkFlag = false; app.cur.edited = true; renderScan(); } break;
+    case 'ebk': if (app.edit) { app.edit.bk = t.dataset.v; app.edit.dirty = true; showStudent(app.edit.origNo); } break;
+
+    case 'delexam': {
+      if (!app.delArm) { app.delArm = true; renderDesign(); break; }
+      app.delArm = false;
+      const id = ex.id;
+      try { await store.deleteExam(id); app.examId = null; ls.set('omr.exam', ''); toast('Sınav silindi.'); if (store.mode === 'db') { /* liste anlık güncellenir */ } } catch (er) { toast(dbErrMsg(er)); }
+      break;
+    }
+  }
+});
+document.addEventListener('change', ev => {
+  const t = ev.target;
+  if (t.id === 'camIn' || t.id === 'galIn') { const fs = Array.from(t.files || []); t.value = ''; if (fs.length) addFiles(fs); return; }
+  if (t.id === 'texIn') { const f = t.files && t.files[0]; t.value = ''; if (f) readTexFile(f); return; }
+  if (t.id === 'qBr' && app.qedit) { app.qedit.br = t.checked; return; }
+  if (t.id === 'exBch' && app.exam) {
+    if (app.results.length) { t.checked = app.exam.bch; toast('Bu sınav için okunmuş kağıt var; karıştırma ayarı değiştirilemez.'); return; }
+    app.exam.bch = t.checked; scheduleExamSave(); renderDesign(); return;
+  }
+  if (!app.exam) return;
+  if (t.id === 'exNq') { setExamField('nq', +t.value); retimeAfterExamChange(); }
+  if (t.id === 'exNd') { setExamField('nd', +t.value); retimeAfterExamChange(); }
+  if (t.id === 'exPen') { setExamField('penalty', +t.value); retimeAfterExamChange(); }
+});
+document.addEventListener('input', ev => {
+  const t = ev.target;
+  if (t.id === 'exTitle' && app.exam) { app.exam.title = t.value; syncDerived(app.exam); scheduleExamSave(); renderTop(); }
+  if ((t.id === 'exDate' || t.id === 'exDur' || t.id === 'exNote') && app.exam) { app.exam[{ exDate: 'date', exDur: 'dur', exNote: 'note' }[t.id]] = t.value; scheduleExamSave(); }
+  if (app.qedit && (t.id === 'qS' || /^qC[0-4]$/.test(t.id))) {
+    if (t.id === 'qS') app.qedit.s = t.value; else app.qedit.c[+t.id.slice(2)] = t.value;
+    updateQPrev();
+  }
+  if (t.id === 'noIn' && app.cur) {
+    const c = app.cur, v = t.value.replace(/\D/g, '');
+    if (v !== t.value) t.value = v;
+    c.no = v; c.edited = true;
+    c.digits.forEach((d, j) => { d.v = j < v.length ? +v[j] : -1; d.flag = false; });
+    t.classList.toggle('bad', !/^\d+$/.test(v));
+    updateDupMsg();
+    const fv = $('.formview svg');
+    if (fv) fv.outerHTML = overlay(app.exam, c.L, c.pts, { digits: c.digits.map(d => d.v), ans: c.ans.join('') },
+      { interactive: true, flags: { d: c.digits.map(d => d.flag), a: c.aFlag }, multi: c.multi });
+  }
+});
+document.addEventListener('keydown', ev => {
+  if (ev.key === 'Escape' && !$('#sheet').hidden) closeSheet();
+  if (ev.key === 'Enter' && ev.target.id === 'keyText') $('[data-act="keytext"]').click();
+});
+$('#sheet').addEventListener('click', ev => { if (ev.target.id === 'sheet') closeSheet(); });
+
+renderAll();
+store.init();
+})();
+</script>
+</body>
+</html>

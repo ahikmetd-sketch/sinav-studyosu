@@ -1,0 +1,90 @@
+% =====================================================================
+%  optik_form.tex  —  Telefon kamerasıyla okunabilen optik form
+%  MATH-LAB PROFALIHD
+%
+%  Kullanım (preamble'da tikz ve pgffor yüklü olmalı):
+%     \input{optik_form}
+%     \renewcommand{\NumaraHane}{6}    % öğrenci numarası hane sayısı
+%     \renewcommand{\SoruSayisi}{20}   % soru sayısı (en çok 30)
+%     \renewcommand{\Kitapcik}{A}      % kitapçıklı sınavda A ya da B; tek kitapçıkta boş bırakın
+%     ...
+%     \OptikForm                       % formu bu noktaya basar
+%
+%  ÖNEMLİ: Aşağıdaki ölçüler (mm) tarama uygulamasındaki ölçülerle
+%  birebir aynıdır. Hane ve soru sayısı dışında hiçbir sabiti
+%  değiştirmeyin; siyah kareleri ve üstteki yön çubuğunu silmeyin.
+%  Uygulamada da aynı hane ve soru sayısını seçin.
+% =====================================================================
+\providecommand{\NumaraHane}{6}
+\providecommand{\SoruSayisi}{20}
+\providecommand{\Kitapcik}{}
+
+\newcommand{\OptikForm}{%
+\begin{tikzpicture}[x=1mm,y=-1mm,
+    ofbub/.style={draw=black!75,line width=0.3mm},
+    oflab/.style={text=black!45,inner sep=0pt,
+                  font=\fontsize{5.5}{5.5}\selectfont\sffamily},
+    oftit/.style={font=\scriptsize\bfseries\sffamily,inner sep=0pt}]
+  \pgfmathtruncatemacro{\ofN}{\NumaraHane}
+  \pgfmathtruncatemacro{\ofQ}{\SoruSayisi}
+  \pgfmathtruncatemacro{\ofC}{ceil(\ofQ/10)}
+  \edef\ofK{\Kitapcik}%
+  \ifx\ofK\empty
+    \pgfmathsetmacro{\ofAX}{9+(\ofN-1)*5+14}
+  \else
+    \pgfmathsetmacro{\ofXB}{9+(\ofN-1)*5+12}
+    \pgfmathsetmacro{\ofAX}{\ofXB+13}
+  \fi
+  \pgfmathsetmacro{\ofW}{\ofAX+(\ofC-1)*36+7+20+10}
+  \def\ofH{74}
+  % --- köşe işaretleri (6 mm) ve yön çubuğu ---
+  \foreach \ofx/\ofy in {0/0,\ofW/0,0/\ofH,\ofW/\ofH}
+    \fill[black] (\ofx-3,\ofy-3) rectangle (\ofx+3,\ofy+3);
+  \fill[black] (12,-1.2) rectangle (40,1.2);
+  % --- satır kılavuzu (5. ve 6. satır arası) ---
+  \draw[black!25,line width=0.2mm] (5,42.5) -- (\ofW-5,42.5);
+  % --- öğrenci numarası ---
+  \pgfmathsetmacro{\ofNC}{9+(\ofN-1)*2.5}
+  \node[oftit] at (\ofNC,6.5) {ÖĞRENCİ NUMARASI};
+  \foreach \ofj in {1,...,\ofN}{
+    \pgfmathsetmacro{\ofx}{9+(\ofj-1)*5}
+    \draw[black!75,line width=0.25mm] (\ofx-2.3,10.5) rectangle (\ofx+2.3,15.5);
+    \foreach \ofd in {0,...,9}{
+      \pgfmathsetmacro{\ofy}{20+\ofd*5}
+      \draw[ofbub] (\ofx,\ofy) circle (2);
+      \node[oflab] at (\ofx,\ofy) {\ofd};
+    }
+  }
+  % --- kitapçık (basılı olarak dolu gelir, öğrenci kodlamaz) ---
+  \ifx\ofK\empty\else
+    \node[oftit] at (\ofXB,6.5) {KİTAPÇIK};
+    \draw[ofbub] (\ofXB,20) circle (2); \node[oflab] at (\ofXB,20) {A};
+    \draw[ofbub] (\ofXB,25) circle (2); \node[oflab] at (\ofXB,25) {B};
+    \if A\ofK \fill[black] (\ofXB,20) circle (2); \else \fill[black] (\ofXB,25) circle (2); \fi
+  \fi
+  % --- cevaplar ---
+  \pgfmathsetmacro{\ofAC}{(\ofAX+\ofW-10)/2}
+  \node[oftit] at (\ofAC,6.5) {CEVAPLAR};
+  \foreach \ofq in {1,...,\ofQ}{
+    \pgfmathtruncatemacro{\ofc}{floor((\ofq-1)/10)}
+    \pgfmathtruncatemacro{\ofr}{mod(\ofq-1,10)}
+    \pgfmathsetmacro{\ofbx}{\ofAX+\ofc*36}
+    \pgfmathsetmacro{\ofy}{20+\ofr*5}
+    \node[oftit,anchor=east] at (\ofbx+4.2,\ofy) {\ofq};
+    \foreach \ofk/\ofL in {0/A,1/B,2/C,3/D,4/E}{
+      \pgfmathsetmacro{\ofx}{\ofbx+7+\ofk*5}
+      \draw[ofbub] (\ofx,\ofy) circle (2);
+      \node[oflab] at (\ofx,\ofy) {\ofL};
+    }
+  }
+\end{tikzpicture}}
+
+% Kodlama örneği: dolu yuvarlak
+\newcommand{\OFdolu}{\tikz[baseline=-0.6ex]\fill[black] (0,0) circle (1.6mm);}
+\newcommand{\OFbos}[1]{\tikz[baseline=-0.6ex]{\draw[black!75,line width=0.3mm] (0,0) circle (1.6mm);#1}}
+\newcommand{\OptikFormNot}{%
+  {\small\sffamily Yuvarlağı tamamen doldurun:\enspace\OFdolu\enspace doğru;\quad
+  \OFbos{\draw[line width=0.3mm] (-1mm,-1mm)--(1mm,1mm);}\
+  \OFbos{\draw[line width=0.3mm] (-1mm,0)--(-0.3mm,-0.8mm)--(1.1mm,1mm);}\
+  \OFbos{\fill[black] (0.5mm,0.5mm) circle (0.5mm);}\enspace yanlış.
+  \NumaraHane{} haneli numaranızı kutulara yazıp her haneyi altındaki sütunda kodlayın. Siyah karelerin üzerine yazmayın, kağıdı katlamayın.}}

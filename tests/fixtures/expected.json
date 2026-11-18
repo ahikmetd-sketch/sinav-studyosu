@@ -1,0 +1,55 @@
+{
+  "sc1": {
+    "ok": true,
+    "no": "875886",
+    "bk": "",
+    "ans": "ECC*CBCBBEDCA.CBABDA",
+    "flags": [
+      4,
+      8
+    ]
+  },
+  "cls0": {
+    "ok": true,
+    "no": "432188",
+    "bk": "",
+    "ans": "CBABEADEB..BCDCBCADE",
+    "flags": []
+  },
+  "cls1": {
+    "ok": true,
+    "no": "933777",
+    "bk": "",
+    "ans": "DB.BDBCEBCBDBDEBEADE",
+    "flags": []
+  },
+  "smpphoto1": {
+    "ok": true,
+    "no": "245718",
+    "bk": "",
+    "ans": "DBCDE.ABCDACEBDAB.CE",
+    "flags": []
+  },
+  "scA": {
+    "ok": true,
+    "no": "333444",
+    "bk": "A",
+    "ans": "CBDDEBCEABCDDAEBCADB",
+    "flags": []
+  },
+  "scB": {
+    "ok": true,
+    "no": "111222",
+    "bk": "B",
+    "ans": "DDDBCCCCCEDAAAEAEABD",
+    "flags": []
+  },
+  "scA-yanlis-ayar": {
+    "ok": false,
+    "error": "layout"
+  },
+  "sc1-yanlis-soru": {
+    "ok": false,
+    "error": "layout"
+  }
+}
